@@ -12,9 +12,7 @@
       class="video-card__thumbnail"
       [attr.aria-label]="'Assistir no YouTube: ' + video.title"
     >
-      <div class="video-card__thumbnail-inner">
-        <span>{{ video.thumbnailLabel }}</span>
-      </div>
+      <img [src]="video.thumbnailUrl" [alt]="video.title" />
     </a>
 
     <div class="video-card__info">

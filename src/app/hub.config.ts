@@ -26,13 +26,14 @@ export interface YouTubeChannelInfo {
   description: string;
   channelLabel: string;
   statusNote: string;
+  subscriberCount: string;
 }
 
 export interface LatestVideoInfo {
   externalUrl: string;
   title: string;
   date: string;
-  thumbnailLabel: string;
+  thumbnailUrl: string;
   note: string;
 }
 
@@ -117,13 +118,14 @@ export const youtubeChannelPlaceholder: YouTubeChannelInfo = {
   description: 'Canal pronto para exibir dados reais via YouTube Data API. Sem valores fictícios, apenas estrutura preparada.',
   channelLabel: 'Canal no YouTube',
   statusNote: 'Inscritos e estatísticas serão preenchidos em breve com integração oficial.',
+  subscriberCount: '---',
 };
 
 export const latestVideoPlaceholder: LatestVideoInfo = {
   externalUrl: 'https://www.youtube.com/@SohJorgeMesmo-gg',
   title: 'Último vídeo ainda não carregado automaticamente',
   date: 'Data disponível com integração YouTube',
-  thumbnailLabel: 'Miniatura do último vídeo',
+  thumbnailUrl: '',
   note: 'O card está estruturado para receber thumb, título e data diretamente do YouTube.',
 };
 

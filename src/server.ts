@@ -37,6 +37,17 @@ app.use(
   }),
 );
 
+app.get('/api/youtube', async (req, res) => {
+  try {
+    const { fetchYoutubeData } = await import('./app/services/youtube.server');
+    const data = await fetchYoutubeData();
+    res.json(data);
+  } catch (error) {
+    console.error('[YouTube API]', error);
+    res.status(500).json({ message: 'Unable to load YouTube data.' });
+  }
+});
+
 /**
  * Handle all other requests by rendering the Angular application.
  */
