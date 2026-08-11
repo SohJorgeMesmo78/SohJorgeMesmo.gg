@@ -1,0 +1,31 @@
+<section class="hero-card" aria-labelledby="hero-title">
+  <div class="hero-card__badge" aria-hidden="true">Hub Oficial</div>
+
+  <div class="hero-card__meta">
+    <picture>
+      <img
+        class="hero-card__avatar"
+        src="/foto.png"
+        alt="Foto do SohJorgeMesmo"
+        width="152"
+        height="152"
+      />
+    </picture>
+    <div class="hero-card__text">
+      <span class="hero-card__pretitle">{{ hero.pretitle }}</span>
+      <h1 id="hero-title">{{ hero.title }}</h1>
+      <p class="hero-card__handle">{{ hero.handle }}</p>
+    </div>
+  </div>
+
+  <p class="hero-card__description">{{ hero.description }}</p>
+
+  <div class="hero-card__accent-block">
+    <span>{{ hero.accent }}</span>
+  </div>
+
+  <div class="hero-card__status">
+    <span class="hero-card__live-pill">{{ hero.liveStatusLabel }}</span>
+    <span class="hero-card__status-text">{{ hero.liveStatusHint }}</span>
+  </div>
+</section>

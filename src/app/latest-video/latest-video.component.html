@@ -1,0 +1,33 @@
+<article class="video-card" aria-labelledby="latest-video-title">
+  <header class="video-card__header">
+    <p class="video-card__eyebrow">Último vídeo</p>
+    <h3 id="latest-video-title">O vídeo mais recente</h3>
+  </header>
+
+  <div class="video-card__content" *ngIf="video$ | async as video">
+    <a
+      [href]="video.externalUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="video-card__thumbnail"
+      [attr.aria-label]="'Assistir no YouTube: ' + video.title"
+    >
+      <div class="video-card__thumbnail-inner">
+        <span>{{ video.thumbnailLabel }}</span>
+      </div>
+    </a>
+
+    <div class="video-card__info">
+      <p class="video-card__date">{{ video.date }}</p>
+      <p class="video-card__title">{{ video.title }}</p>
+      <a
+        [href]="video.externalUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="button button--outline"
+      >
+        Assistir no YouTube
+      </a>
+    </div>
+  </div>
+</article>

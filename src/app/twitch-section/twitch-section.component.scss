@@ -1,0 +1,55 @@
+:host {
+  display: block;
+}
+
+.twitch-card {
+  background: linear-gradient(180deg, rgba(255, 170, 0, 0.1), rgba(18, 18, 20, 0.96));
+  border-radius: 28px;
+  border: 1px solid rgba(255, 170, 0, 0.14);
+  padding: 1.4rem;
+}
+
+.twitch-card__header {
+  margin-bottom: 1rem;
+}
+
+.twitch-card__eyebrow {
+  margin: 0;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.14rem;
+}
+
+.twitch-card h3 {
+  margin: 0.5rem 0 0;
+  color: var(--color-text);
+  font-size: 1.1rem;
+}
+
+.twitch-card__body {
+  display: grid;
+  gap: 1rem;
+}
+
+.twitch-card__status-group {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.twitch-card__schedule {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.twitch-card__status {
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.twitch-card__note {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}

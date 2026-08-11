@@ -1,12 +1,25 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FooterComponent } from './footer/footer.component';
+import { HeroComponent } from './hero/hero.component';
+import { LatestVideoComponent } from './latest-video/latest-video.component';
+import { SocialLinksComponent } from './social-links/social-links.component';
+import { TwitchSectionComponent } from './twitch-section/twitch-section.component';
+import { YoutubeSectionComponent } from './youtube-section/youtube-section.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [
+    CommonModule,
+    HeroComponent,
+    SocialLinksComponent,
+    YoutubeSectionComponent,
+    LatestVideoComponent,
+    TwitchSectionComponent,
+    FooterComponent,
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-  title = 'SohJorgeMesmo.gg';
-}
+export class AppComponent {}

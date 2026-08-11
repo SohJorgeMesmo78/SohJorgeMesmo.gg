@@ -1,0 +1,32 @@
+<article class="youtube-card" aria-labelledby="youtube-title">
+  <header class="youtube-card__header">
+    <div>
+      <p class="youtube-card__eyebrow">Em destaque</p>
+      <h2 id="youtube-title">Canal do YouTube</h2>
+    </div>
+    <span class="youtube-card__tag">Integração futura</span>
+  </header>
+
+  <div class="youtube-card__body" *ngIf="channel$ | async as channel">
+    <div class="youtube-card__badge">
+      <span class="youtube-card__icon" aria-hidden="true">▶</span>
+      <div>
+        <p class="youtube-card__channel-label">{{ channel.channelLabel }}</p>
+        <p class="youtube-card__channel-name">{{ channel.name }}</p>
+      </div>
+    </div>
+
+    <p class="youtube-card__description">{{ channel.description }}</p>
+
+    <a
+      [href]="channel.externalUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="button button--solid"
+    >
+      Acessar canal
+    </a>
+
+    <p class="youtube-card__note">{{ channel.statusNote }}</p>
+  </div>
+</article>

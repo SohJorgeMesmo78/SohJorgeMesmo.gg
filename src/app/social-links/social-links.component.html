@@ -1,0 +1,38 @@
+<section class="links-card" aria-labelledby="links-title">
+  <header class="links-card__header">
+    <div>
+      <p class="links-card__label">Conexões rápidas</p>
+      <h2 id="links-title">Onde me encontrar</h2>
+    </div>
+    <span class="links-card__hint">Link hub pensado para bio e acesso rápido</span>
+  </header>
+
+  <div class="links-card__grid">
+    <ng-container *ngFor="let link of primaryLinks; trackBy: trackById">
+      <a
+        [href]="link.url"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="link-button link-button--primary"
+        [attr.aria-label]="'Ir para ' + link.name"
+      >
+        <span class="link-button__label">{{ link.label }}</span>
+        <span class="link-button__meta">{{ link.description }}</span>
+      </a>
+    </ng-container>
+  </div>
+
+  <div class="links-card__secondary">
+    <ng-container *ngFor="let link of secondaryLinks; trackBy: trackById">
+      <a
+        [href]="link.url"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="link-pill"
+        [attr.aria-label]="'Ir para ' + link.name"
+      >
+        <span>{{ link.label }}</span>
+      </a>
+    </ng-container>
+  </div>
+</section>

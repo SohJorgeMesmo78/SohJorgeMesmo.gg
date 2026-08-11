@@ -1,1 +1,103 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Montserrat:wght@400;500;600;700&display=swap');
+
+:root {
+  color-scheme: dark;
+  --color-bg: #121214;
+  --color-surface: #16161c;
+  --color-surface-soft: #1d1d27;
+  --color-text: #f4ead4;
+  --color-muted: #c9beac;
+  --color-primary: #ffaa00;
+  --color-secondary: #000066;
+  --color-border: rgba(244, 234, 212, 0.12);
+  --color-border-strong: rgba(255, 170, 0, 0.22);
+  --font-sans: 'Montserrat', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+  --font-display: 'MedievalSharp', Georgia, serif;
+  --radius: 24px;
+  --radius-sm: 18px;
+  --container-max: 1080px;
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --transition: 180ms ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, rgba(255, 170, 0, 0.14), transparent 18%),
+    linear-gradient(180deg, #121214 0%, #0f1014 100%);
+  color: var(--color-text);
+}
+
+body,
+button,
+input,
+textarea,
+a {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+a {
+  transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+}
+
+:focus-visible {
+  outline: 2px solid rgba(255, 170, 0, 0.95);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: rgba(255, 170, 0, 0.32);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  color: var(--color-text);
+  font-family: var(--font-display);
+}
+
+p {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+button {
+  border: none;
+}
+
+@media (max-width: 650px) {
+  :root {
+    font-size: 15px;
+  }
+}
+

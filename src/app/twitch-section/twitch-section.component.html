@@ -1,0 +1,24 @@
+<article class="twitch-card" aria-labelledby="twitch-title">
+  <header class="twitch-card__header">
+    <p class="twitch-card__eyebrow">Lives</p>
+    <h3 id="twitch-title">Twitch oficial</h3>
+  </header>
+
+  <div class="twitch-card__body" *ngIf="twitch$ | async as twitch">
+    <div class="twitch-card__status-group">
+      <span class="twitch-card__schedule">{{ twitch.schedule }}</span>
+      <span class="twitch-card__status">{{ twitch.status }}</span>
+    </div>
+
+    <p class="twitch-card__note">{{ twitch.note }}</p>
+
+    <a
+      [href]="twitch.externalUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="button button--solid"
+    >
+      Assistir na Twitch
+    </a>
+  </div>
+</article>
