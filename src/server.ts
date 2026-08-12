@@ -37,9 +37,9 @@ app.use(
   }),
 );
 
-app.get('/api/youtube', async (req, res) => {
+app.get('/api/youtube', async (_req, res) => {
   try {
-    const { fetchYoutubeData } = await import('./app/services/youtube.server');
+    const { fetchYoutubeData } = await import('./app/services/youtube-data');
     const data = await fetchYoutubeData();
     res.json(data);
   } catch (error) {

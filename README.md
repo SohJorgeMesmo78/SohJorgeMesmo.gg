@@ -4,13 +4,39 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 ## Development server
 
-To start a local development server, run:
+To start a local Angular development server, run:
 
 ```bash
 ng serve
 ```
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+## YouTube API and Vercel local testing
+
+This project includes a server-side YouTube endpoint at `/api/youtube`.
+
+For local development with Vercel Functions, copy the example file and add the real value:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Then set your key:
+
+```env
+YOUTUBE_API_KEY=your_youtube_api_key_here
+```
+
+If you want to test the Vercel Function behavior locally, use:
+
+```bash
+npx vercel dev
+```
+
+This executes the serverless function route at `http://localhost:3000/api/youtube` and is the recommended workflow for verifying the same behavior used in production on Vercel.
+
+> `ng serve` does not automatically run Vercel Functions, so the recommended local check for the API route is `npx vercel dev`.
 
 ## Code scaffolding
 

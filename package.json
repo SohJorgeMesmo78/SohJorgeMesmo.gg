@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:SohJorgeMesmo.gg": "node dist/soh-jorge-mesmo.gg/server/server.mjs"
+    "serve:ssr:SohJorgeMesmo.gg": "node dist/soh-jorge-mesmo.gg/server/server.mjs",
+    "vercel:dev": "vercel dev"
   },
   "private": true,
   "dependencies": {
@@ -33,6 +34,7 @@
     "@types/express": "^4.17.17",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^18.18.0",
+    "@vercel/node": "^5.9.9",
     "jasmine-core": "~5.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

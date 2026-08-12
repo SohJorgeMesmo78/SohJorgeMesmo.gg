@@ -13,16 +13,7 @@ import {
   LatestVideoInfo,
   YouTubeChannelInfo,
 } from '../hub.config';
-
-interface YoutubeApiPayload {
-  channelUrl: string;
-  channelName: string;
-  subscriberCount: string;
-  videoTitle: string;
-  videoPublishedAt: string;
-  videoUrl: string;
-  thumbnailUrl: string;
-}
+import type { YoutubeApiPayload } from './youtube-data';
 
 @Injectable({
   providedIn: 'root',
