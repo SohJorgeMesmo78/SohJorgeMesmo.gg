@@ -1,22 +1,12 @@
-<article class="youtube-card" aria-labelledby="youtube-title">
-  <div class="youtube-card__body" *ngIf="channel$ | async as channel">
-    <div class="youtube-card__identity">
-      <span class="youtube-card__icon" aria-hidden="true">▶</span>
-      <div>
-        <p class="youtube-card__eyebrow">YouTube</p>
-        <h2 id="youtube-title">{{ channel.name }}</h2>
-      </div>
-    </div>
-
-    <p class="youtube-card__stats">{{ channel.subscriberCount }} inscritos</p>
-
-    <a
-      [href]="channel.externalUrl"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="button button--solid"
-    >
-      ▶ Ver vídeos
-    </a>
-  </div>
+<article class="channel-strip" aria-label="Canal do YouTube" *ngIf="channel$ | async as channel">
+  <p class="channel-strip__label">YouTube</p>
+  <p class="channel-strip__value">{{ channel.name }} • {{ channel.subscriberCount }} inscritos</p>
+  <a
+    [href]="channel.externalUrl"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="channel-strip__link"
+  >
+    Acessar canal
+  </a>
 </article>

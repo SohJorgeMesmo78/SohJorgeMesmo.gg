@@ -1,22 +1,12 @@
-<article class="twitch-card" aria-labelledby="twitch-title">
-  <div class="twitch-card__body" *ngIf="twitch$ | async as twitch">
-    <div class="twitch-card__identity">
-      <span class="twitch-card__icon" aria-hidden="true">●</span>
-      <div>
-        <p class="twitch-card__eyebrow">Twitch</p>
-        <h3 id="twitch-title">Lives da guilda</h3>
-      </div>
-    </div>
-
-    <p class="twitch-card__schedule">{{ twitch.schedule }}</p>
-
-    <a
-      [href]="twitch.externalUrl"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="button button--solid"
-    >
-      ● Assistir às lives
-    </a>
-  </div>
+<article class="live-strip" aria-label="Twitch" *ngIf="twitch$ | async as twitch">
+  <p class="live-strip__label">Twitch</p>
+  <p class="live-strip__value">{{ twitch.schedule }}</p>
+  <a
+    [href]="twitch.externalUrl"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="live-strip__button"
+  >
+    Assistir na Twitch
+  </a>
 </article>

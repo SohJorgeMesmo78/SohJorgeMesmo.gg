@@ -1,28 +1,23 @@
-<article class="video-card" aria-labelledby="latest-video-title">
-  <header class="video-card__header">
-    <p class="video-card__eyebrow">Último vídeo</p>
-    <h3 id="latest-video-title">No YouTube agora</h3>
+<article class="video-feature" aria-labelledby="latest-video-title">
+  <header class="video-feature__header">
+    <p class="video-feature__eyebrow">O que tá rolando</p>
   </header>
 
-  <div class="video-card__content" *ngIf="video$ | async as video">
+  <div class="video-feature__content" *ngIf="video$ | async as video">
     <a
       [href]="video.externalUrl"
       target="_blank"
       rel="noopener noreferrer"
-      class="video-card__thumbnail"
+      class="video-feature__thumbnail"
       [attr.aria-label]="'Assistir no YouTube: ' + video.title"
     >
       <img [src]="video.thumbnailUrl" [alt]="video.title" />
-      <span class="video-card__play">▶ Assistir</span>
+      <span class="video-feature__play">▶ Assistir</span>
     </a>
 
-    <div class="video-card__info">
-      <p class="video-card__meta">
-        <span>{{ video.date }}</span>
-        <span>•</span>
-        <span>Canal SohJorgeMesmo</span>
-      </p>
-      <p class="video-card__title">{{ video.title }}</p>
+    <div class="video-feature__info">
+      <p class="video-feature__meta">{{ video.date }}</p>
+      <h2 id="latest-video-title">{{ video.title }}</h2>
       <a
         [href]="video.externalUrl"
         target="_blank"
