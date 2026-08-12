@@ -13,6 +13,15 @@ const fallbackPayload = {
 
 const tokenCache = new Map();
 const isDevelopment = process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'development' || (!process.env.VERCEL_ENV && !process.env.NODE_ENV);
+const NO_STORE_HEADERS = {
+  'Cache-Control': 'no-store, max-age=0',
+  'CDN-Cache-Control': 'no-store',
+  'Vercel-CDN-Cache-Control': 'no-store',
+};
+
+function logSafe(stage, details = {}) {
+  console.log('[Twitch API]', JSON.stringify({ stage, ...details }));
+}
 
 function getEnvValue(key) {
   const value = process.env[key]?.trim();
@@ -47,16 +56,10 @@ function setCachedAccessToken(accessToken, expiresInSeconds) {
   });
 }
 
-function redactToken(value) {
-  if (!value) {
-    return undefined;
-  }
-
-  return `${value.slice(0, 6)}...${value.slice(-4)}`;
-}
-
-async function requestJson(url, init) {
+async function requestJson(url, init, stage) {
   const response = await fetch(url, init);
+
+  logSafe(stage, { status: response.status, ok: response.ok });
 
   if (!response.ok) {
     const message = await response.text();
@@ -82,8 +85,11 @@ async function getAppAccessToken() {
 
   const cached = getCachedAccessToken();
   if (cached) {
+    logSafe('token-cache', { hit: true });
     return cached;
   }
+
+  logSafe('token-cache', { hit: false });
 
   const tokenResponse = await requestJson('https://id.twitch.tv/oauth2/token', {
     method: 'POST',
@@ -95,7 +101,7 @@ async function getAppAccessToken() {
       client_secret: clientSecret,
       grant_type: 'client_credentials',
     }).toString(),
-  });
+  }, 'token-request');
 
   if (!tokenResponse.access_token) {
     const error = new Error('Twitch token response did not include an access token.');
@@ -118,12 +124,27 @@ async function getCurrentStream() {
       'Client-ID': clientId,
       Authorization: `Bearer ${accessToken}`,
     },
+  }, 'streams-request');
+
+  logSafe('streams-result', {
+    login: TWITCH_CHANNEL_LOGIN,
+    streamCount: Array.isArray(streamData.data) ? streamData.data.length : 0,
   });
 
   return streamData.data?.[0];
 }
 
 module.exports = async function handler(req, res) {
+  for (const [name, value] of Object.entries(NO_STORE_HEADERS)) {
+    res.setHeader(name, value);
+  }
+
+  logSafe('request', {
+    credentialsConfigured: Boolean(getEnvValue('TWITCH_CLIENT_ID') && getEnvValue('TWITCH_CLIENT_SECRET')),
+    login: TWITCH_CHANNEL_LOGIN,
+    cacheHeaders: NO_STORE_HEADERS,
+  });
+
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
     return res.status(405).json({ message: 'Method not allowed.' });
@@ -141,8 +162,14 @@ module.exports = async function handler(req, res) {
     }
 
     const stream = await getCurrentStream();
+    const isLive = Boolean(stream);
 
-    if (!stream) {
+    logSafe('status-calculated', {
+      login: TWITCH_CHANNEL_LOGIN,
+      isLive,
+    });
+
+    if (!isLive) {
       return res.status(200).json({
         ...fallbackPayload,
         title: 'Twitch',
@@ -164,11 +191,10 @@ module.exports = async function handler(req, res) {
     });
   } catch (error) {
     const details = {
-      keyConfigured: Boolean(getEnvValue('TWITCH_CLIENT_ID') && getEnvValue('TWITCH_CLIENT_SECRET')),
+      credentialsConfigured: Boolean(getEnvValue('TWITCH_CLIENT_ID') && getEnvValue('TWITCH_CLIENT_SECRET')),
       status: error.status || 500,
       message: error.message || 'Unknown Twitch API error.',
-      tokenPreview: error.tokenPreview || undefined,
-      url: error.url ? redactToken(error.url) : undefined,
+      login: TWITCH_CHANNEL_LOGIN,
     };
 
     console.error('[Twitch API] Function failed.', details);
