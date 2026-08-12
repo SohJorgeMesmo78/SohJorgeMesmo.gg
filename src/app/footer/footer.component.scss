@@ -3,11 +3,25 @@
 }
 
 .site-footer {
-  margin-top: 2rem;
+  position: relative;
+  margin-top: 6rem;
   border-top: 1px solid rgba(244, 234, 212, 0.1);
   padding: 1.35rem 0 2rem;
   color: var(--color-muted);
   text-align: center;
+}
+
+.site-footer__cat {
+  top: -5.35rem;
+  left: 50%;
+  width: 14rem;
+  --cat-duration: 13.5s;
+  --cat-delay: -9s;
+  transform: translateX(-50%);
+}
+
+.site-footer__cat:hover {
+  transform: translateX(-50%);
 }
 
 .site-footer__content {
@@ -27,4 +41,9 @@
 .site-footer a:hover,
 .site-footer a:focus-visible {
   text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .site-footer { margin-top: 4.5rem; }
+  .site-footer__cat { top: -3.8rem; width: 10rem; }
 }

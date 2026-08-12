@@ -4,6 +4,7 @@
   </header>
 
   <div class="video-feature__content" *ngIf="video$ | async as video">
+    <app-cat-easter-egg class="video-feature__cat" cat="nico" label="Nico"></app-cat-easter-egg>
     <a
       [href]="video.externalUrl"
       target="_blank"

@@ -1,0 +1,59 @@
+:host {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  cursor: pointer;
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.28));
+  transition: transform 220ms ease, filter 220ms ease;
+  animation: cat-idle var(--cat-duration, 9s) ease-in-out var(--cat-delay, 0s) infinite;
+}
+
+:host::after {
+  content: attr(data-label);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.35rem);
+  padding: 0.28rem 0.48rem;
+  border: 1px solid rgba(255, 170, 0, 0.22);
+  border-radius: 999px;
+  background: rgba(18, 18, 20, 0.94);
+  color: var(--color-text);
+  font: 600 0.7rem/1 var(--font-sans);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 4px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+:host:hover img {
+  filter: drop-shadow(0 11px 15px rgba(255, 170, 0, 0.15));
+  transform: translateY(-4px) rotate(-1deg);
+}
+
+:host:hover::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@keyframes cat-idle {
+  0%, 78%, 100% { transform: translateY(0) rotate(0); }
+  84% { transform: translateY(-2px) rotate(0.35deg); }
+  90% { transform: translateY(0) rotate(-0.25deg); }
+}
+
+@media (hover: none), (pointer: coarse) {
+  :host { cursor: default; pointer-events: none; }
+  :host::after { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  img { animation: none; }
+  img, :host::after { transition: none; }
+}

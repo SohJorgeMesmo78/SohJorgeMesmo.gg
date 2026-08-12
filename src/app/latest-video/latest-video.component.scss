@@ -3,7 +3,16 @@
 }
 
 .video-feature {
+  position: relative;
   padding-top: 0.2rem;
+}
+
+.video-feature__cat {
+  top: 1.3rem;
+  left: -2.4rem;
+  width: 7.2rem;
+  --cat-duration: 10.5s;
+  --cat-delay: -2s;
 }
 
 .video-feature__header {
@@ -20,6 +29,7 @@
 }
 
 .video-feature__content {
+  position: relative;
   display: grid;
   gap: 1rem;
 }
@@ -202,4 +212,8 @@
   }
 
   .video-feature__quest { animation: none; }
+}
+
+@media (max-width: 699px) {
+  .video-feature__cat { display: none; }
 }
