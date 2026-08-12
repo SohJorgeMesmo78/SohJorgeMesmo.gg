@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, shareReplay } from 'rxjs';
+import { catchError, map, Observable, of, shareReplay, throwError } from 'rxjs';
 import {
   heroData,
   socialLinks,
   twitchInfoPlaceholder,
-  latestVideoPlaceholder,
-  youtubeChannelPlaceholder,
   HeroData,
   SocialLink,
   TwitchInfo,
@@ -24,20 +22,15 @@ export class ContentService {
 
   constructor(private readonly http: HttpClient) {
     this.youtube$ = this.http.get<YoutubeApiPayload>('/api/youtube').pipe(
-      shareReplay(1),
-      catchError(() => of({
-        channelUrl: youtubeChannelPlaceholder.externalUrl,
-        channelName: youtubeChannelPlaceholder.name,
-        subscriberCount: youtubeChannelPlaceholder.subscriberCount,
-        videoTitle: latestVideoPlaceholder.title,
-        videoPublishedAt: latestVideoPlaceholder.date,
-        videoUrl: latestVideoPlaceholder.externalUrl,
-        thumbnailUrl: latestVideoPlaceholder.thumbnailUrl,
-      })),
+      shareReplay({ bufferSize: 1, refCount: true }),
+      catchError((error) => {
+        console.error('[ContentService] YouTube request failed.', error);
+        return throwError(() => error);
+      }),
     );
 
     this.twitch$ = this.http.get<TwitchInfo>('/api/twitch').pipe(
-      shareReplay(1),
+      shareReplay({ bufferSize: 1, refCount: true }),
       catchError(() => of(twitchInfoPlaceholder)),
     );
   }

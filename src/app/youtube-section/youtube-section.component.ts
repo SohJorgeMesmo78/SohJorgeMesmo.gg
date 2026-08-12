@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ContentService } from '../services/content.service';
 
 @Component({
   selector: 'app-youtube-section',
@@ -8,4 +9,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './youtube-section.component.html',
   styleUrls: ['./youtube-section.component.scss'],
 })
-export class YoutubeSectionComponent {}
+export class YoutubeSectionComponent {
+  private readonly contentService = inject(ContentService);
+  readonly channel$ = this.contentService.getYoutubeChannel();
+}
