@@ -1,5 +1,6 @@
 const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3';
 const CHANNEL_LOOKUP_QUERY = 'SohJorgeMesmo-gg';
+const isDevelopment = process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'development' || (!process.env.VERCEL_ENV && !process.env.NODE_ENV);
 
 const fallbackPayload = {
   channelUrl: 'https://www.youtube.com/@SohJorgeMesmo-gg',
@@ -11,12 +12,40 @@ const fallbackPayload = {
   thumbnailUrl: '',
 };
 
+function redactApiKey(url) {
+  try {
+    const parsed = new URL(url);
+    if (parsed.searchParams.has('key')) {
+      parsed.searchParams.set('key', '[REDACTED]');
+    }
+    return parsed.toString();
+  } catch {
+    return url.replace(/key=([^&]+)/gi, 'key=[REDACTED]');
+  }
+}
+
+function buildErrorPayload({ message, status, url, keyConfigured }) {
+  return {
+    error: {
+      keyConfigured,
+      status,
+      message,
+      url: url ? redactApiKey(url) : undefined,
+    },
+  };
+}
+
 async function requestJson(url) {
   const response = await fetch(url);
 
   if (!response.ok) {
     const message = await response.text();
-    throw new Error(`YouTube API request failed (${response.status}): ${message}`);
+    const error = new Error(
+      `YouTube API request failed (${response.status}): ${message}`,
+    );
+    error.status = response.status;
+    error.url = url;
+    throw error;
   }
 
   return response.json();
@@ -27,14 +56,19 @@ async function findChannelId(apiKey) {
     CHANNEL_LOOKUP_QUERY,
   )}&key=${encodeURIComponent(apiKey)}`;
 
-  const data = await requestJson(url);
-  const channelId = data.items?.[0]?.id?.channelId;
+  try {
+    const data = await requestJson(url);
+    const channelId = data.items?.[0]?.id?.channelId;
 
-  if (!channelId) {
-    throw new Error('Unable to resolve YouTube channel id for SohJorgeMesmo.');
+    if (!channelId) {
+      throw new Error('Unable to resolve YouTube channel id for SohJorgeMesmo.');
+    }
+
+    return channelId;
+  } catch (error) {
+    error.url = url;
+    throw error;
   }
-
-  return channelId;
 }
 
 async function getChannelData(channelId, apiKey) {
@@ -42,17 +76,22 @@ async function getChannelData(channelId, apiKey) {
     channelId,
   )}&key=${encodeURIComponent(apiKey)}`;
 
-  const data = await requestJson(url);
-  const result = data.items?.[0];
+  try {
+    const data = await requestJson(url);
+    const result = data.items?.[0];
 
-  if (!result) {
-    throw new Error('Unable to fetch YouTube channel data.');
+    if (!result) {
+      throw new Error('Unable to fetch YouTube channel data.');
+    }
+
+    return {
+      channelName: result.snippet?.title ?? fallbackPayload.channelName,
+      subscriberCount: result.statistics?.subscriberCount ?? fallbackPayload.subscriberCount,
+    };
+  } catch (error) {
+    error.url = url;
+    throw error;
   }
-
-  return {
-    channelName: result.snippet?.title ?? fallbackPayload.channelName,
-    subscriberCount: result.statistics?.subscriberCount ?? fallbackPayload.subscriberCount,
-  };
 }
 
 async function getLatestVideo(channelId, apiKey) {
@@ -60,27 +99,32 @@ async function getLatestVideo(channelId, apiKey) {
     channelId,
   )}&order=date&type=video&maxResults=1&key=${encodeURIComponent(apiKey)}`;
 
-  const data = await requestJson(url);
-  const video = data.items?.[0];
+  try {
+    const data = await requestJson(url);
+    const video = data.items?.[0];
 
-  if (!video) {
-    throw new Error('Unable to fetch the latest YouTube video.');
+    if (!video) {
+      throw new Error('Unable to fetch the latest YouTube video.');
+    }
+
+    const thumbnailUrl =
+      video.snippet?.thumbnails?.high?.url ||
+      video.snippet?.thumbnails?.medium?.url ||
+      video.snippet?.thumbnails?.default?.url ||
+      fallbackPayload.thumbnailUrl;
+
+    return {
+      videoTitle: video.snippet?.title ?? fallbackPayload.videoTitle,
+      videoPublishedAt: video.snippet?.publishedAt ?? fallbackPayload.videoPublishedAt,
+      videoUrl: video.id?.videoId
+        ? `https://www.youtube.com/watch?v=${video.id.videoId}`
+        : fallbackPayload.videoUrl,
+      thumbnailUrl,
+    };
+  } catch (error) {
+    error.url = url;
+    throw error;
   }
-
-  const thumbnailUrl =
-    video.snippet?.thumbnails?.high?.url ||
-    video.snippet?.thumbnails?.medium?.url ||
-    video.snippet?.thumbnails?.default?.url ||
-    fallbackPayload.thumbnailUrl;
-
-  return {
-    videoTitle: video.snippet?.title ?? fallbackPayload.videoTitle,
-    videoPublishedAt: video.snippet?.publishedAt ?? fallbackPayload.videoPublishedAt,
-    videoUrl: video.id?.videoId
-      ? `https://www.youtube.com/watch?v=${video.id.videoId}`
-      : fallbackPayload.videoUrl,
-    thumbnailUrl,
-  };
 }
 
 module.exports = async function handler(req, res) {
@@ -92,6 +136,19 @@ module.exports = async function handler(req, res) {
   const apiKey = process.env.YOUTUBE_API_KEY?.trim();
 
   if (!apiKey) {
+    const missingKeyError = {
+      keyConfigured: false,
+      status: 500,
+      message: 'YOUTUBE_API_KEY is missing. Set it in the environment before calling the YouTube API.',
+      url: undefined,
+    };
+
+    console.error('[YouTube API] Missing YOUTUBE_API_KEY.', missingKeyError);
+
+    if (isDevelopment) {
+      return res.status(500).json({ error: missingKeyError });
+    }
+
     return res.status(200).json(fallbackPayload);
   }
 
@@ -112,7 +169,19 @@ module.exports = async function handler(req, res) {
 
     return res.status(200).json(payload);
   } catch (error) {
-    console.error('[YouTube API] Function failed:', error);
+    const details = {
+      keyConfigured: true,
+      status: error.status || 500,
+      message: error.message || 'Unknown YouTube API error.',
+      url: error.url ? redactApiKey(error.url) : undefined,
+    };
+
+    console.error('[YouTube API] Function failed.', details);
+
+    if (isDevelopment) {
+      return res.status(details.status).json({ error: details });
+    }
+
     return res.status(200).json(fallbackPayload);
   }
 };

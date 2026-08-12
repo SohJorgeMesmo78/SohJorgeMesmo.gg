@@ -41,10 +41,25 @@ app.get('/api/youtube', async (_req, res) => {
   try {
     const { fetchYoutubeData } = await import('./app/services/youtube-data');
     const data = await fetchYoutubeData();
-    res.json(data);
+    return res.json(data);
   } catch (error) {
-    console.error('[YouTube API]', error);
-    res.status(500).json({ message: 'Unable to load YouTube data.' });
+    const typedError = error as { status?: number; message?: string; url?: string };
+    const details = {
+      keyConfigured: Boolean(process.env['YOUTUBE_API_KEY']?.trim()),
+      status: typedError.status || 500,
+      message: typedError.message || 'Unable to load YouTube data.',
+      url: typedError.url ? new URL(typedError.url).toString() : undefined,
+    };
+
+    console.error('[YouTube API] Express route failed:', details);
+
+    const isDevelopment = process.env['NODE_ENV'] === 'development' || !process.env['NODE_ENV'];
+
+    if (isDevelopment) {
+      return res.status(details.status).json({ error: details });
+    }
+
+    return res.status(500).json({ message: 'Unable to load YouTube data.' });
   }
 });
 
