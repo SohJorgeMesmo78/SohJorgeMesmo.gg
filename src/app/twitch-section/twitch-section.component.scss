@@ -25,7 +25,32 @@
   font-weight: 700;
 }
 
+.status-strip__value--live {
+  color: #ffb4b4;
+}
+
 .status-strip__meta {
   color: var(--color-muted);
   font-size: 0.82rem;
+}
+
+.status-strip__meta--small {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  color: var(--color-text);
+}
+
+.status-strip__cta {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 0.1rem;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+@media (min-width: 860px) {
+  .status-strip {
+    min-height: 6.2rem;
+  }
 }

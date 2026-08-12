@@ -63,6 +63,42 @@ app.get('/api/youtube', async (_req, res) => {
   }
 });
 
+app.get('/api/twitch', async (_req, res) => {
+  try {
+    const { fetchTwitchData } = await import('./app/services/twitch-data');
+    const data = await fetchTwitchData();
+    return res.json(data);
+  } catch (error) {
+    const typedError = error as { status?: number; message?: string; url?: string };
+    const details = {
+      keyConfigured: Boolean(process.env['TWITCH_CLIENT_ID']?.trim() && process.env['TWITCH_CLIENT_SECRET']?.trim()),
+      status: typedError.status || 500,
+      message: typedError.message || 'Unable to load Twitch data.',
+      url: typedError.url ? new URL(typedError.url).toString() : undefined,
+    };
+
+    console.error('[Twitch API] Express route failed:', details);
+
+    const isDevelopment = process.env['NODE_ENV'] === 'development' || !process.env['NODE_ENV'];
+
+    if (isDevelopment) {
+      return res.status(details.status).json({ error: details });
+    }
+
+    return res.status(200).json({
+      externalUrl: 'https://www.twitch.tv/sohjorgemesmo',
+      schedule: 'Live às 19h',
+      title: 'Twitch',
+      status: 'Offline agora',
+      note: 'Live às 19h',
+      isLive: false,
+      liveTitle: undefined,
+      gameName: undefined,
+      viewerCount: null,
+    });
+  }
+});
+
 /**
  * Handle all other requests by rendering the Angular application.
  */

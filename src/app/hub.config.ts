@@ -43,6 +43,10 @@ export interface TwitchInfo {
   title: string;
   status: string;
   note: string;
+  isLive?: boolean;
+  liveTitle?: string;
+  gameName?: string;
+  viewerCount?: number | null;
 }
 
 export const heroData: HeroData = {

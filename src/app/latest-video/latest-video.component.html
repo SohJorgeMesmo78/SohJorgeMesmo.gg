@@ -9,6 +9,7 @@
       target="_blank"
       rel="noopener noreferrer"
       class="video-feature__thumbnail"
+      [class.video-feature__thumbnail--new]="isNewVideo(video.date)"
       [attr.aria-label]="'Assistir no YouTube: ' + video.title"
     >
       <img [src]="video.thumbnailUrl" [alt]="video.title" />

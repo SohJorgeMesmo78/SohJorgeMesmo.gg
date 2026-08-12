@@ -1,5 +1,25 @@
-<article class="status-strip" aria-label="Status da Twitch">
+<article class="status-strip" aria-label="Status da Twitch" *ngIf="twitch$ | async as twitch">
   <p class="status-strip__label">Twitch</p>
-  <p class="status-strip__value">● Offline agora</p>
-  <p class="status-strip__meta">Live às 19h</p>
+
+  <ng-container *ngIf="twitch.isLive; else offlineState">
+    <p class="status-strip__value status-strip__value--live">🔴 AO VIVO AGORA</p>
+    <p class="status-strip__meta">{{ twitch.liveTitle || 'Live em andamento' }}</p>
+    <p class="status-strip__meta status-strip__meta--small" *ngIf="twitch.gameName || twitch.viewerCount !== null">
+      <span *ngIf="twitch.gameName">{{ twitch.gameName }}</span>
+      <span *ngIf="twitch.viewerCount !== null && twitch.viewerCount !== undefined">• {{ twitch.viewerCount }} espectadores</span>
+    </p>
+    <a
+      [href]="twitch.externalUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="status-strip__cta"
+    >
+      Entrar na live →
+    </a>
+  </ng-container>
+
+  <ng-template #offlineState>
+    <p class="status-strip__value">● Offline agora</p>
+    <p class="status-strip__meta">Live às 19h</p>
+  </ng-template>
 </article>

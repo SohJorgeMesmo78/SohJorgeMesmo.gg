@@ -20,6 +20,7 @@ import type { YoutubeApiPayload } from './youtube-data';
 })
 export class ContentService {
   private readonly youtube$: Observable<YoutubeApiPayload>;
+  private readonly twitch$: Observable<TwitchInfo>;
 
   constructor(private readonly http: HttpClient) {
     this.youtube$ = this.http.get<YoutubeApiPayload>('/api/youtube').pipe(
@@ -33,6 +34,11 @@ export class ContentService {
         videoUrl: latestVideoPlaceholder.externalUrl,
         thumbnailUrl: latestVideoPlaceholder.thumbnailUrl,
       })),
+    );
+
+    this.twitch$ = this.http.get<TwitchInfo>('/api/twitch').pipe(
+      shareReplay(1),
+      catchError(() => of(twitchInfoPlaceholder)),
     );
   }
 
@@ -70,6 +76,6 @@ export class ContentService {
   }
 
   getTwitchInfo(): Observable<TwitchInfo> {
-    return of(twitchInfoPlaceholder);
+    return this.twitch$;
   }
 }
