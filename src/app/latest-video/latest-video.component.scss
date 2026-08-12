@@ -215,5 +215,20 @@
 }
 
 @media (max-width: 699px) {
+  .video-feature__cat {
+    top: -4.7rem;
+    right: 0.35rem;
+    left: auto;
+    z-index: 0;
+    width: 5.125rem;
+    pointer-events: none;
+  }
+
+  .video-feature__thumbnail {
+    z-index: 1;
+  }
+}
+
+@media (max-width: 339px) {
   .video-feature__cat { display: none; }
 }
