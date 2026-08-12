@@ -4,16 +4,8 @@ import {
   latestVideoPlaceholder,
   youtubeChannelPlaceholder,
 } from '../hub.config';
-
-export interface YoutubeApiPayload {
-  channelUrl: string;
-  channelName: string;
-  subscriberCount: string;
-  videoTitle: string;
-  videoPublishedAt: string;
-  videoUrl: string;
-  thumbnailUrl: string;
-}
+import type { YoutubeApiPayload } from './youtube-api-payload';
+export type { YoutubeApiPayload } from './youtube-api-payload';
 
 interface YoutubeCallError extends Error {
   status?: number;
@@ -21,7 +13,9 @@ interface YoutubeCallError extends Error {
 }
 
 const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3';
-const CHANNEL_LOOKUP_QUERY = 'SohJorgeMesmo-gg';
+const YOUTUBE_CHANNEL_ID = 'UCbmWTrqndKH7NilwHkv4oMg';
+const MAX_UPLOAD_PAGES = 3;
+const MAX_UPLOAD_RESULTS_PER_PAGE = 50;
 const isDevelopment = process.env['NODE_ENV'] === 'development' || process.env['VERCEL_ENV'] === 'development' || (!process.env['VERCEL_ENV'] && !process.env['NODE_ENV']);
 
 function redactApiKey(url: string): string {
@@ -69,12 +63,15 @@ function getYoutubeApiKey(): string | undefined {
 
 function createYoutubeFallbackPayload(): YoutubeApiPayload {
   return {
+    available: false,
+    videoAvailable: false,
+    isLive: false,
     channelUrl: youtubeChannelPlaceholder.externalUrl,
     channelName: youtubeChannelPlaceholder.name,
     subscriberCount: youtubeChannelPlaceholder.subscriberCount,
-    videoTitle: latestVideoPlaceholder.title,
-    videoPublishedAt: latestVideoPlaceholder.date,
-    videoUrl: latestVideoPlaceholder.externalUrl,
+    videoTitle: null,
+    videoPublishedAt: null,
+    videoUrl: null,
     thumbnailUrl: latestVideoPlaceholder.thumbnailUrl,
   };
 }
@@ -84,6 +81,26 @@ async function requestJson<T>(url: string): Promise<T> {
 
   if (!response.ok) {
     const message = await response.text();
+    let quotaReason: string | undefined;
+
+    try {
+      const errorBody = JSON.parse(message) as {
+        error?: { errors?: Array<{ reason?: string }> };
+      };
+      quotaReason = errorBody.error?.errors?.find((item) =>
+        ['quotaExceeded', 'rateLimitExceeded'].includes(item.reason ?? ''),
+      )?.reason;
+    } catch {
+      quotaReason = undefined;
+    }
+
+    if (response.status === 429 || quotaReason) {
+      console.error('[YouTube API] Quota limit reached.', {
+        status: response.status,
+        reason: quotaReason ?? 'HTTP 429',
+      });
+    }
+
     const error = new Error(`YouTube API request failed (${response.status}): ${message}`) as YoutubeCallError;
     error.status = response.status;
     error.url = url;
@@ -93,29 +110,8 @@ async function requestJson<T>(url: string): Promise<T> {
   return (await response.json()) as T;
 }
 
-async function findChannelId(apiKey: string): Promise<string> {
-  const url = `${YOUTUBE_API_BASE}/search?part=snippet&type=channel&maxResults=1&q=${encodeURIComponent(
-    CHANNEL_LOOKUP_QUERY,
-  )}&key=${encodeURIComponent(apiKey)}`;
-
-  try {
-    const data = await requestJson<{ items?: Array<{ id?: { channelId?: string } }> }>(url);
-    const channelId = data.items?.[0]?.id?.channelId;
-
-    if (!channelId) {
-      throw new Error('Unable to resolve YouTube channel id for SohJorgeMesmo.');
-    }
-
-    return channelId;
-  } catch (error) {
-    const typedError = error as YoutubeCallError;
-    typedError.url = url;
-    throw typedError;
-  }
-}
-
 async function getChannelData(channelId: string, apiKey: string) {
-  const url = `${YOUTUBE_API_BASE}/channels?part=snippet,statistics&id=${encodeURIComponent(
+  const url = `${YOUTUBE_API_BASE}/channels?part=snippet,statistics,contentDetails&id=${encodeURIComponent(
     channelId,
   )}&key=${encodeURIComponent(apiKey)}`;
 
@@ -124,6 +120,7 @@ async function getChannelData(channelId: string, apiKey: string) {
       items?: Array<{
         snippet?: { title?: string };
         statistics?: { subscriberCount?: string };
+        contentDetails?: { relatedPlaylists?: { uploads?: string } };
       }>;
     }>(url);
 
@@ -136,6 +133,7 @@ async function getChannelData(channelId: string, apiKey: string) {
     return {
       channelName: result.snippet?.title ?? youtubeChannelPlaceholder.name,
       subscriberCount: result.statistics?.subscriberCount ?? youtubeChannelPlaceholder.subscriberCount,
+      uploadsPlaylistId: result.contentDetails?.relatedPlaylists?.uploads,
     };
   } catch (error) {
     const typedError = error as YoutubeCallError;
@@ -159,109 +157,134 @@ function parseYouTubeDuration(duration?: string): number {
   return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
 }
 
-async function getLatestVideo(channelId: string, apiKey: string) {
-  const searchUrl = `${YOUTUBE_API_BASE}/search?part=snippet&channelId=${encodeURIComponent(
-    channelId,
-  )}&order=date&type=video&maxResults=20&key=${encodeURIComponent(apiKey)}`;
+async function getLatestVideo(uploadsPlaylistId: string, apiKey: string) {
+  let nextPageToken: string | undefined;
+  let isLive = false;
 
-  try {
-    const searchData = await requestJson<{
-      items?: Array<{
-        id?: { videoId?: string };
-        snippet?: {
-          title?: string;
-          publishedAt?: string;
-          thumbnails?: {
-            high?: { url?: string };
-            medium?: { url?: string };
-            default?: { url?: string };
+  for (let pageIndex = 0; pageIndex < MAX_UPLOAD_PAGES; pageIndex += 1) {
+    const uploadsUrl = `${YOUTUBE_API_BASE}/playlistItems?part=snippet,contentDetails&playlistId=${encodeURIComponent(
+      uploadsPlaylistId,
+    )}&maxResults=${MAX_UPLOAD_RESULTS_PER_PAGE}${nextPageToken ? `&pageToken=${encodeURIComponent(nextPageToken)}` : ''}&key=${encodeURIComponent(apiKey)}`;
+
+    try {
+      const uploadsData = await requestJson<{
+        nextPageToken?: string;
+        items?: Array<{
+          contentDetails?: { videoId?: string };
+          snippet?: {
+            title?: string;
+            publishedAt?: string;
+            thumbnails?: {
+              high?: { url?: string };
+              medium?: { url?: string };
+              default?: { url?: string };
+            };
           };
-        };
-      }>;
-    }>(searchUrl);
+        }>;
+      }>(uploadsUrl);
 
-    const videoIds = searchData.items
-      ?.map((item) => item.id?.videoId)
-      .filter((videoId): videoId is string => Boolean(videoId)) ?? [];
+      const videoIds = uploadsData.items
+        ?.map((item) => item.contentDetails?.videoId)
+        .filter((videoId): videoId is string => Boolean(videoId)) ?? [];
 
-    if (videoIds.length === 0) {
-      throw new Error('Unable to fetch YouTube uploads for channel selection.');
-    }
-
-    const detailsUrl = `${YOUTUBE_API_BASE}/videos?part=snippet,contentDetails,status,liveStreamingDetails&id=${encodeURIComponent(
-      videoIds.join(','),
-    )}&key=${encodeURIComponent(apiKey)}`;
-
-    const detailsData = await requestJson<{
-      items?: Array<{
-        id?: string;
-        snippet?: {
-          title?: string;
-          publishedAt?: string;
-          thumbnails?: {
-            high?: { url?: string };
-            medium?: { url?: string };
-            default?: { url?: string };
-          };
-          liveBroadcastContent?: string;
-        };
-        status?: { uploadStatus?: string };
-        contentDetails?: { duration?: string };
-        liveStreamingDetails?: Record<string, unknown> | null;
-      }>;
-    }>(detailsUrl);
-
-    const detailsById = new Map(
-      (detailsData.items ?? []).map((item) => [item.id, item] as const),
-    );
-
-    const validVideo = searchData.items?.find((item) => {
-      const videoId = item.id?.videoId;
-      if (!videoId) {
-        return false;
+      if (videoIds.length === 0) {
+        break;
       }
 
-      const details = detailsById.get(videoId);
-      if (!details) {
-        return false;
+      const detailsUrl = `${YOUTUBE_API_BASE}/videos?part=snippet,contentDetails,status,liveStreamingDetails&id=${encodeURIComponent(
+        videoIds.join(','),
+      )}&key=${encodeURIComponent(apiKey)}`;
+
+      const detailsData = await requestJson<{
+        items?: Array<{
+          id?: string;
+          snippet?: {
+            title?: string;
+            publishedAt?: string;
+            thumbnails?: {
+              maxres?: { url?: string };
+              standard?: { url?: string };
+              high?: { url?: string };
+              medium?: { url?: string };
+              default?: { url?: string };
+            };
+            liveBroadcastContent?: string;
+          };
+          status?: { uploadStatus?: string };
+          contentDetails?: { duration?: string };
+          liveStreamingDetails?: Record<string, unknown> | null;
+        }>;
+      }>(detailsUrl);
+
+      const detailsById = new Map(
+        (detailsData.items ?? []).map((item) => [item.id, item] as const),
+      );
+
+      isLive = isLive || (detailsData.items ?? []).some(
+        (item) => item.snippet?.liveBroadcastContent === 'live',
+      );
+
+      const validVideo = uploadsData.items?.find((item) => {
+        const videoId = item.contentDetails?.videoId;
+        if (!videoId) {
+          return false;
+        }
+
+        const details = detailsById.get(videoId);
+        if (!details) {
+          return false;
+        }
+
+        const isLiveVideo = Boolean(details.liveStreamingDetails) || details.snippet?.liveBroadcastContent === 'live';
+        const durationSeconds = parseYouTubeDuration(details.contentDetails?.duration);
+        const isShortVideo = durationSeconds <= 180;
+
+        return !isLiveVideo && !isShortVideo;
+      });
+
+      if (validVideo) {
+        const selectedVideoId = validVideo.contentDetails?.videoId;
+        const selectedDetails = selectedVideoId ? detailsById.get(selectedVideoId) : undefined;
+        const thumbnails = selectedDetails?.snippet?.thumbnails;
+        const thumbnailUrl =
+          thumbnails?.maxres?.url ||
+          thumbnails?.standard?.url ||
+          thumbnails?.high?.url ||
+          thumbnails?.medium?.url ||
+          thumbnails?.default?.url ||
+          latestVideoPlaceholder.thumbnailUrl;
+
+        return {
+          videoTitle: selectedDetails?.snippet?.title ?? validVideo.snippet?.title ?? latestVideoPlaceholder.title,
+          videoPublishedAt:
+            selectedDetails?.snippet?.publishedAt ?? validVideo.snippet?.publishedAt ?? latestVideoPlaceholder.date,
+          videoUrl: selectedVideoId
+            ? `https://www.youtube.com/watch?v=${selectedVideoId}`
+            : latestVideoPlaceholder.externalUrl,
+          thumbnailUrl,
+          isLive,
+        };
       }
 
-      const isLiveVideo = Boolean(details.liveStreamingDetails) || details.snippet?.liveBroadcastContent === 'live';
-      const durationSeconds = parseYouTubeDuration(details.contentDetails?.duration);
-      const isShortVideo = durationSeconds <= 180;
+      if (!uploadsData.nextPageToken) {
+        break;
+      }
 
-      return !isLiveVideo && !isShortVideo;
-    });
-
-    const selectedVideo = validVideo ?? searchData.items?.[0];
-
-    if (!selectedVideo) {
-      throw new Error('Unable to fetch the latest long-form YouTube video.');
+      nextPageToken = uploadsData.nextPageToken;
+    } catch (error) {
+      const typedError = error as YoutubeCallError;
+      typedError.url = uploadsUrl;
+      throw typedError;
     }
-
-    const selectedVideoId = selectedVideo.id?.videoId;
-    const selectedDetails = selectedVideoId ? detailsById.get(selectedVideoId) : undefined;
-    const thumbnailUrl =
-      selectedDetails?.snippet?.thumbnails?.high?.url ||
-      selectedVideo.snippet?.thumbnails?.high?.url ||
-      selectedVideo.snippet?.thumbnails?.medium?.url ||
-      selectedVideo.snippet?.thumbnails?.default?.url ||
-      latestVideoPlaceholder.thumbnailUrl;
-
-    return {
-      videoTitle: selectedDetails?.snippet?.title ?? selectedVideo.snippet?.title ?? latestVideoPlaceholder.title,
-      videoPublishedAt:
-        selectedDetails?.snippet?.publishedAt ?? selectedVideo.snippet?.publishedAt ?? latestVideoPlaceholder.date,
-      videoUrl: selectedVideoId
-        ? `https://www.youtube.com/watch?v=${selectedVideoId}`
-        : latestVideoPlaceholder.externalUrl,
-      thumbnailUrl,
-    };
-  } catch (error) {
-    const typedError = error as YoutubeCallError;
-    typedError.url = searchUrl;
-    throw typedError;
   }
+
+  return {
+    videoTitle: null,
+    videoPublishedAt: null,
+    videoUrl: null,
+    thumbnailUrl: '',
+    isLive,
+  };
 }
 
 export async function fetchYoutubeData(): Promise<YoutubeApiPayload> {
@@ -288,12 +311,25 @@ export async function fetchYoutubeData(): Promise<YoutubeApiPayload> {
   }
 
   try {
-    const channelId = await findChannelId(apiKey);
-    const channelData = await getChannelData(channelId, apiKey);
-    const latestVideo = await getLatestVideo(channelId, apiKey);
+    const channelData = await getChannelData(YOUTUBE_CHANNEL_ID, apiKey);
+
+    if (!channelData.uploadsPlaylistId) {
+      throw new Error('Unable to resolve the YouTube uploads playlist from channel data.');
+    }
+
+    const latestVideo = await getLatestVideo(channelData.uploadsPlaylistId, apiKey);
 
     return {
-      channelUrl: `https://www.youtube.com/channel/${channelId}`,
+      available: true,
+      videoAvailable: Boolean(
+        latestVideo.videoTitle &&
+        latestVideo.videoUrl &&
+        latestVideo.thumbnailUrl &&
+        latestVideo.videoPublishedAt &&
+        !Number.isNaN(Date.parse(latestVideo.videoPublishedAt))
+      ),
+      isLive: latestVideo.isLive,
+      channelUrl: `https://www.youtube.com/channel/${YOUTUBE_CHANNEL_ID}`,
       channelName: channelData.channelName,
       subscriberCount: channelData.subscriberCount,
       videoTitle: latestVideo.videoTitle,

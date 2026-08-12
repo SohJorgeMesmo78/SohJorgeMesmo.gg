@@ -38,9 +38,19 @@ app.use(
 );
 
 app.get('/api/youtube', async (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+
   try {
     const { fetchYoutubeData } = await import('./app/services/youtube-data');
     const data = await fetchYoutubeData();
+
+    const isDevelopment = process.env['NODE_ENV'] === 'development' || !process.env['NODE_ENV'];
+    if (!isDevelopment) {
+      res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=60');
+      res.setHeader('CDN-Cache-Control', 'public, max-age=600');
+      res.setHeader('Vercel-CDN-Cache-Control', 'public, max-age=600');
+    }
+
     return res.json(data);
   } catch (error) {
     const typedError = error as { status?: number; message?: string; url?: string };

@@ -17,7 +17,7 @@ const CAT_ASSETS: Record<CatName, { width: number; height: number }> = {
       alt=""
       [attr.width]="asset.width"
       [attr.height]="asset.height"
-      loading="lazy"
+      [attr.loading]="cat === 'nico' ? 'eager' : 'lazy'"
       decoding="async"
     />
   `,

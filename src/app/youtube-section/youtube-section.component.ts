@@ -12,5 +12,5 @@ import { IconComponent } from '../shared/icon.component';
 })
 export class YoutubeSectionComponent {
   private readonly contentService = inject(ContentService);
-  readonly channel$ = this.contentService.getYoutubeChannel();
+  readonly status$ = this.contentService.getYoutubeLiveStatus();
 }

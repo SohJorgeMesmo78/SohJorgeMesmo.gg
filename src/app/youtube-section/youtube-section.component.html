@@ -1,9 +1,24 @@
-<article class="status-strip" aria-label="Status do YouTube" *ngIf="channel$ | async as channel">
+<article class="status-strip" [class.status-strip--live]="youtube.isLive" aria-label="Status do YouTube" *ngIf="status$ | async as youtube">
   <div class="status-strip__head">
     <app-icon name="youtube" [size]="18"></app-icon>
     <p class="status-strip__label">YouTube</p>
   </div>
 
-  <p class="status-strip__value"><span class="status-strip__dot"></span> Offline agora</p>
-  <p class="status-strip__meta">Live às 19h</p>
+  <ng-container *ngIf="youtube.isLive; else offlineState">
+    <p class="status-strip__value status-strip__value--live">🔴 AO VIVO AGORA</p>
+    <p class="status-strip__meta">Live em andamento</p>
+    <a
+      [href]="youtube.externalUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="status-strip__cta"
+    >
+      Entrar na live →
+    </a>
+  </ng-container>
+
+  <ng-template #offlineState>
+    <p class="status-strip__value"><span class="status-strip__dot"></span> Offline agora</p>
+    <p class="status-strip__meta">Live às 19h</p>
+  </ng-template>
 </article>

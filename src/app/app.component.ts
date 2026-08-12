@@ -7,6 +7,7 @@ import { SocialLinksComponent } from './social-links/social-links.component';
 import { TwitchSectionComponent } from './twitch-section/twitch-section.component';
 import { YoutubeSectionComponent } from './youtube-section/youtube-section.component';
 import { RevealDirective } from './shared/reveal.directive';
+import { CatEasterEggComponent } from './shared/cat-easter-egg/cat-easter-egg.component';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ import { RevealDirective } from './shared/reveal.directive';
     TwitchSectionComponent,
     FooterComponent,
     RevealDirective,
+    CatEasterEggComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],

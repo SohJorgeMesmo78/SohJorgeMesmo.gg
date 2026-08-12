@@ -1,12 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ContentService } from '../services/content.service';
-import { CatEasterEggComponent } from '../shared/cat-easter-egg/cat-easter-egg.component';
 
 @Component({
   selector: 'app-latest-video',
   standalone: true,
-  imports: [CommonModule, CatEasterEggComponent],
+  imports: [CommonModule],
   templateUrl: './latest-video.component.html',
   styleUrls: ['./latest-video.component.scss'],
 })

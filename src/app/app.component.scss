@@ -30,6 +30,48 @@
   gap: 0.7rem;
 }
 
+.page-shell__nico {
+  position: relative;
+  z-index: 1;
+  height: 6rem;
+  pointer-events: none;
+}
+
+.page-shell__nico app-cat-easter-egg {
+  top: 0;
+  left: -1.5rem;
+  width: 5.5rem;
+  pointer-events: auto;
+  --cat-duration: 10.5s;
+  --cat-delay: -2s;
+}
+
+@media (max-width: 699px) {
+  .page-shell__nico {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    height: 5rem;
+  }
+
+  .page-shell__nico app-cat-easter-egg {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    margin-right: 0.35rem;
+    width: 4.5rem;
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 339px) {
+  .page-shell__nico app-cat-easter-egg {
+    right: 0.15rem;
+    width: 3.75rem;
+  }
+}
+
 @media (min-width: 860px) {
   .page-shell {
     padding-top: 1.75rem;

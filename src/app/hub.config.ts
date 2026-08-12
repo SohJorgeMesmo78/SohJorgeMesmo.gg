@@ -50,6 +50,14 @@ export interface TwitchInfo {
   viewerCount?: number | null;
 }
 
+export interface YouTubeLiveStatus {
+  externalUrl: string;
+  isLive: boolean;
+  status: string;
+  note: string;
+  statusSource: 'youtube' | 'twitch-fallback';
+}
+
 export const heroData: HeroData = {
   title: 'SohJorgeMesmo',
   pretitle: 'Hub oficial do criador de conteúdo',

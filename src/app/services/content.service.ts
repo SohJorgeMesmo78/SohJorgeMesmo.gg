@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, shareReplay, throwError } from 'rxjs';
+import { catchError, combineLatest, map, Observable, of, shareReplay, startWith } from 'rxjs';
 import {
   heroData,
   socialLinks,
@@ -10,28 +10,50 @@ import {
   TwitchInfo,
   LatestVideoInfo,
   YouTubeChannelInfo,
+  YouTubeLiveStatus,
 } from '../hub.config';
-import type { YoutubeApiPayload } from './youtube-data';
+import type { YoutubeApiPayload } from './youtube-api-payload';
+
+type YoutubeState =
+  | { status: 'loading' }
+  | { status: 'success'; data: YoutubeApiPayload }
+  | { status: 'unavailable' };
+
+function hasValidVideo(data: YoutubeApiPayload): boolean {
+  return Boolean(
+    data.available &&
+    data.videoAvailable &&
+    data.videoTitle?.trim() &&
+    data.videoUrl?.trim() &&
+    data.thumbnailUrl?.trim() &&
+    data.videoPublishedAt &&
+    !Number.isNaN(Date.parse(data.videoPublishedAt))
+  );
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class ContentService {
-  private readonly youtube$: Observable<YoutubeApiPayload>;
+  private readonly youtubeState$: Observable<YoutubeState>;
   private readonly twitch$: Observable<TwitchInfo>;
 
   constructor(private readonly http: HttpClient) {
-    this.youtube$ = this.http.get<YoutubeApiPayload>('/api/youtube').pipe(
-      shareReplay({ bufferSize: 1, refCount: true }),
+    this.youtubeState$ = this.http.get<YoutubeApiPayload>('/api/youtube').pipe(
+      map((data): YoutubeState => data.available === false
+        ? { status: 'unavailable' }
+        : { status: 'success', data }),
       catchError((error) => {
         console.error('[ContentService] YouTube request failed.', error);
-        return throwError(() => error);
+        return of<YoutubeState>({ status: 'unavailable' });
       }),
+      startWith<YoutubeState>({ status: 'loading' }),
+      shareReplay({ bufferSize: 1, refCount: true }),
     );
 
     this.twitch$ = this.http.get<TwitchInfo>('/api/twitch').pipe(
-      shareReplay({ bufferSize: 1, refCount: true }),
       catchError(() => of(twitchInfoPlaceholder)),
+      shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
 
@@ -43,28 +65,58 @@ export class ContentService {
     return of(socialLinks);
   }
 
-  getYoutubeChannel(): Observable<YouTubeChannelInfo> {
-    return this.youtube$.pipe(
-      map((result) => ({
-        externalUrl: result.channelUrl,
-        name: result.channelName,
+  getYoutubeChannel(): Observable<YouTubeChannelInfo | null> {
+    return this.youtubeState$.pipe(
+      map((state) => state.status === 'success' ? ({
+        externalUrl: state.data.channelUrl,
+        name: state.data.channelName,
         description: 'Dados carregados diretamente da YouTube Data API.',
         channelLabel: 'Canal no YouTube',
-        statusNote: `${result.subscriberCount} inscritos`,
-        subscriberCount: result.subscriberCount,
-      })),
+        statusNote: `${state.data.subscriberCount} inscritos`,
+        subscriberCount: state.data.subscriberCount,
+      }) : null),
     );
   }
 
-  getLatestVideo(): Observable<LatestVideoInfo> {
-    return this.youtube$.pipe(
-      map((result) => ({
-        externalUrl: result.videoUrl,
-        title: result.videoTitle,
-        date: result.videoPublishedAt,
-        thumbnailUrl: result.thumbnailUrl,
-        note: 'Dados carregados diretamente da YouTube Data API.',
-      })),
+  getYoutubeLiveStatus(): Observable<YouTubeLiveStatus> {
+    return combineLatest([this.youtubeState$, this.twitch$]).pipe(
+      map(([youtubeState, twitch]) => {
+        if (youtubeState.status === 'success') {
+          return {
+            externalUrl: youtubeState.data.channelUrl,
+            isLive: youtubeState.data.isLive,
+            status: youtubeState.data.isLive ? '🔴 AO VIVO AGORA' : 'Offline agora',
+            note: youtubeState.data.isLive ? 'Entrar na live →' : 'Live às 19h',
+            statusSource: 'youtube' as const,
+          };
+        }
+
+        return {
+          externalUrl: 'https://www.youtube.com/@SohJorgeMesmo-gg',
+          isLive: Boolean(twitch.isLive),
+          status: twitch.isLive ? '🔴 AO VIVO AGORA' : 'Offline agora',
+          note: twitch.isLive ? 'Entrar na live →' : 'Live às 19h',
+          statusSource: 'twitch-fallback' as const,
+        };
+      }),
+    );
+  }
+
+  getLatestVideo(): Observable<LatestVideoInfo | null> {
+    return this.youtubeState$.pipe(
+      map((state) => {
+        if (state.status !== 'success' || !hasValidVideo(state.data)) {
+          return null;
+        }
+
+        return {
+          externalUrl: state.data.videoUrl!,
+          title: state.data.videoTitle!,
+          date: state.data.videoPublishedAt!,
+          thumbnailUrl: state.data.thumbnailUrl,
+          note: 'Dados carregados diretamente da YouTube Data API.',
+        };
+      }),
     );
   }
 
