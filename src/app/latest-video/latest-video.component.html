@@ -14,7 +14,7 @@
     >
       <img [src]="video.thumbnailUrl" [alt]="video.title" />
       <span class="video-feature__play">▶ Assistir</span>
-      <span class="video-feature__quest" *ngIf="isNewVideo(video.date)">!</span>
+      <span class="video-feature__quest" *ngIf="isNewVideo(video.date)" title="Nova missão disponível" aria-label="Nova missão disponível">!</span>
     </a>
 
     <div class="video-feature__info">

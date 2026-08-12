@@ -5,7 +5,12 @@
   </div>
 
   <div class="hero-banner__content">
-    <p class="hero-banner__eyebrow">SohJorgeMesmo</p>
+    <button class="hero-banner__eyebrow hero-banner__rotator" (click)="onClick()" aria-label="Ver todas as redes em A Guilda" title="Ir para A Guilda">
+      <span class="hero-banner__rotator-item" [class.is-changing]="isChanging">
+      <app-icon [name]="items[currentIndex].name" [size]="18"></app-icon>
+      <span class="hero-banner__rotator-label">{{ items[currentIndex].label }}</span>
+      </span>
+    </button>
     <h1 id="hero-title">Taverna do Jooj</h1>
     <p class="hero-banner__tagline">Jogos, caos e decisões questionáveis.</p>
 

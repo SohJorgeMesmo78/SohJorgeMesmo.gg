@@ -1,14 +1,15 @@
+<div class="scroll-progress" aria-hidden="true"></div>
 <main class="page-shell" role="main">
   <div class="page-shell__content">
-    <app-hero></app-hero>
+    <app-hero appReveal></app-hero>
 
-    <div class="page-shell__feature-row" aria-label="Informações rápidas">
+    <div class="page-shell__feature-row" appReveal aria-label="Informações rápidas">
       <app-twitch-section></app-twitch-section>
       <app-youtube-section></app-youtube-section>
     </div>
 
-    <app-latest-video></app-latest-video>
-    <app-social-links></app-social-links>
+    <app-latest-video appReveal></app-latest-video>
+    <app-social-links appReveal></app-social-links>
   </div>
 </main>
 

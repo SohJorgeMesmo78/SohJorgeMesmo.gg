@@ -1,5 +1,9 @@
 <article class="status-strip" aria-label="Status do YouTube" *ngIf="channel$ | async as channel">
-  <p class="status-strip__label">YouTube</p>
-  <p class="status-strip__value">{{ channel.subscriberCount }} inscritos</p>
-  <p class="status-strip__meta">{{ channel.statusNote }}</p>
+  <div class="status-strip__head">
+    <app-icon name="youtube" [size]="18"></app-icon>
+    <p class="status-strip__label">YouTube</p>
+  </div>
+
+  <p class="status-strip__value"><span class="status-strip__dot"></span> Offline agora</p>
+  <p class="status-strip__meta">Live às 19h</p>
 </article>

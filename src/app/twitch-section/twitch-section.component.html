@@ -1,5 +1,8 @@
-<article class="status-strip" aria-label="Status da Twitch" *ngIf="twitch$ | async as twitch">
-  <p class="status-strip__label">Twitch</p>
+<article class="status-strip" [class.status-strip--live]="twitch.isLive" aria-label="Status da Twitch" *ngIf="twitch$ | async as twitch">
+  <div class="status-strip__head">
+    <app-icon name="twitch" [size]="18"></app-icon>
+    <p class="status-strip__label">Twitch</p>
+  </div>
 
   <ng-container *ngIf="twitch.isLive; else offlineState">
     <p class="status-strip__value status-strip__value--live">🔴 AO VIVO AGORA</p>
@@ -19,7 +22,7 @@
   </ng-container>
 
   <ng-template #offlineState>
-    <p class="status-strip__value">● Offline agora</p>
+    <p class="status-strip__value"><span class="status-strip__dot"></span> Offline agora</p>
     <p class="status-strip__meta">Live às 19h</p>
   </ng-template>
 </article>

@@ -8,6 +8,7 @@ export interface SocialLink {
   description: string;
   priority: 'primary' | 'secondary';
   icon: HubPlatformIcon;
+  handle: string;
 }
 
 export interface HeroData {
@@ -68,6 +69,7 @@ export const socialLinks: SocialLink[] = [
     description: 'Vídeos e novidades do canal',
     priority: 'primary',
     icon: 'youtube',
+    handle: '@SohJorgeMesmo',
   },
   {
     id: 'twitch',
@@ -77,6 +79,7 @@ export const socialLinks: SocialLink[] = [
     description: 'Assista às lives ao vivo',
     priority: 'primary',
     icon: 'twitch',
+    handle: '@SohJorgeMesmo',
   },
   {
     id: 'instagram',
@@ -86,6 +89,7 @@ export const socialLinks: SocialLink[] = [
     description: 'Acompanhe os bastidores',
     priority: 'secondary',
     icon: 'instagram',
+    handle: '@SohJorgeMesmo.gg',
   },
   {
     id: 'tiktok',
@@ -95,6 +99,7 @@ export const socialLinks: SocialLink[] = [
     description: 'Clipes rápidos e destaque',
     priority: 'secondary',
     icon: 'tiktok',
+    handle: '@SohJorgeMesmo.gg',
   },
   {
     id: 'x',
@@ -104,6 +109,7 @@ export const socialLinks: SocialLink[] = [
     description: 'Atualizações rápidas e comunidade',
     priority: 'secondary',
     icon: 'x',
+    handle: '@SohJorgeMesmo78',
   },
   {
     id: 'livepix',
@@ -113,6 +119,7 @@ export const socialLinks: SocialLink[] = [
     description: 'Conexão direta com o público',
     priority: 'secondary',
     icon: 'livepix',
+    handle: '@SohJorgeMesmo',
   },
 ];
 

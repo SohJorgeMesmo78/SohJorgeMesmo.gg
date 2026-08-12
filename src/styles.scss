@@ -92,9 +92,17 @@ button {
   border: none;
 }
 
+button:active,
+a:active { transform: translateY(1px); }
+
 @media (max-width: 650px) {
   :root {
     font-size: 15px;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
 

@@ -57,6 +57,37 @@
   font-weight: 700;
 }
 
+.hero-banner__rotator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: transparent;
+  border: none;
+  color: var(--color-muted);
+  font-weight: 700;
+  cursor: pointer;
+  width: min(100%, 15.5rem);
+  min-height: 2.2rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.hero-banner__rotator-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  transition: transform 260ms ease, opacity 260ms ease;
+}
+
+.hero-banner__rotator-item.is-changing { opacity: 0; transform: translateY(-5px); }
+.hero-banner__rotator:hover { color: var(--color-primary); background: rgba(255, 170, 0, 0.06); }
+.hero-banner__rotator:active { transform: translateY(1px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-banner__rotator-item { transition: none; }
+}
+
 .hero-banner h1 {
   font-family: var(--font-display);
   font-size: clamp(2.8rem, 10vw, 5.4rem);

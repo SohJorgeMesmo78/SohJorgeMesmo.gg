@@ -1,33 +1,24 @@
-<section class="links-card" aria-labelledby="links-title">
+<section class="links-card" aria-labelledby="links-title" id="guild">
   <header class="links-card__header">
     <p class="links-card__label">A Guilda</p>
     <h2 id="links-title">Siga a jornada</h2>
   </header>
-
-  <div class="links-card__primary">
-    <ng-container *ngFor="let link of primaryLinks; trackBy: trackById">
+  <div class="links-grid">
+    <ng-container *ngFor="let link of socialLinks; trackBy: trackById">
       <a
         [href]="link.url"
         target="_blank"
         rel="noopener noreferrer"
-        class="link-button"
+        class="link-card"
         [attr.aria-label]="'Ir para ' + link.name"
       >
-        <span class="link-button__label">{{ link.label }}</span>
-      </a>
-    </ng-container>
-  </div>
-
-  <div class="links-card__secondary" aria-label="Outras redes sociais">
-    <ng-container *ngFor="let link of secondaryLinks; trackBy: trackById">
-      <a
-        [href]="link.url"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="link-pill"
-        [attr.aria-label]="'Ir para ' + link.name"
-      >
-        <span>{{ link.label }}</span>
+        <div class="link-card__icon">
+          <app-icon [name]="link.icon" [size]="22"></app-icon>
+        </div>
+        <div class="link-card__body">
+          <div class="link-card__title">{{ link.name }}</div>
+          <div class="link-card__handle">{{ link.handle }}</div>
+        </div>
       </a>
     </ng-container>
   </div>
