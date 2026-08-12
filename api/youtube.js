@@ -212,6 +212,8 @@ async function getLatestVideo(channelId, apiKey) {
           isLiveVideo,
           isShortVideo,
           reason,
+          details, // carry the details object found in this page's videos.list
+          rawSnippet: item.snippet,
         };
       });
 
@@ -229,6 +231,7 @@ async function getLatestVideo(channelId, apiKey) {
 
       const firstValidVideo = candidates.find((candidate) => !candidate.reason);
       if (firstValidVideo) {
+        // Keep the details object with the selected candidate to avoid an extra request when possible
         latestLongFormVideo = firstValidVideo;
         break;
       }
@@ -249,20 +252,27 @@ async function getLatestVideo(channelId, apiKey) {
   }
 
   const selectedVideoId = latestLongFormVideo.videoId;
-  const selectedDetails = selectedVideoId ? new Map((await requestJson(
-    `${YOUTUBE_API_BASE}/videos?part=snippet,contentDetails,status,liveStreamingDetails&id=${encodeURIComponent(selectedVideoId)}&key=${encodeURIComponent(apiKey)}`,
-    'video-details',
-  )).items ?? []).get(selectedVideoId) : undefined;
+  // Prefer the details object we already have from the scanned page
+  let selectedDetails = latestLongFormVideo.details;
 
-  const thumbnailUrl =
-    selectedDetails?.snippet?.thumbnails?.high?.url ||
-    selectedDetails?.snippet?.thumbnails?.medium?.url ||
-    selectedDetails?.snippet?.thumbnails?.default?.url ||
-    fallbackPayload.thumbnailUrl;
+  if (!selectedDetails && selectedVideoId) {
+    const fresh = await requestJson(
+      `${YOUTUBE_API_BASE}/videos?part=snippet,contentDetails,status,liveStreamingDetails&id=${encodeURIComponent(selectedVideoId)}&key=${encodeURIComponent(apiKey)}`,
+      'video-details',
+    );
+    selectedDetails = (fresh.items ?? [])[0];
+  }
+
+  // Thumbnail preference: maxres > standard > high > medium > default
+  const thumbs = selectedDetails?.snippet?.thumbnails ?? {};
+  const thumbnailUrl = thumbs?.maxres?.url || thumbs?.standard?.url || thumbs?.high?.url || thumbs?.medium?.url || thumbs?.default?.url || fallbackPayload.thumbnailUrl;
+
+  const title = selectedDetails?.snippet?.title ?? latestLongFormVideo.title ?? fallbackPayload.videoTitle;
+  const publishedAt = selectedDetails?.snippet?.publishedAt ?? latestLongFormVideo.rawSnippet?.publishedAt ?? fallbackPayload.videoPublishedAt;
 
   return {
-    videoTitle: selectedDetails?.snippet?.title ?? fallbackPayload.videoTitle,
-    videoPublishedAt: selectedDetails?.snippet?.publishedAt ?? fallbackPayload.videoPublishedAt,
+    videoTitle: title,
+    videoPublishedAt: publishedAt,
     videoUrl: selectedVideoId ? `https://www.youtube.com/watch?v=${selectedVideoId}` : fallbackPayload.videoUrl,
     thumbnailUrl,
   };
