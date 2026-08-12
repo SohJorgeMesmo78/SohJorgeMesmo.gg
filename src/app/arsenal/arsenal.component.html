@@ -1,0 +1,44 @@
+<section class="arsenal" aria-labelledby="arsenal-title">
+  <header class="arsenal__header">
+    <div>
+      <p class="arsenal__eyebrow">Equipamento atual</p>
+      <h2 id="arsenal-title">O Arsenal</h2>
+    </div>
+    <p class="arsenal__intro">As ferramentas que entram em campo nas lives e vídeos.</p>
+  </header>
+
+  <div class="arsenal__grid">
+    <article class="gear-card" *ngFor="let item of items">
+      <div class="gear-card__visual" aria-hidden="true">
+        <img *ngIf="item.image; else categoryIcon" [src]="item.image" alt="" loading="lazy" />
+        <ng-template #categoryIcon>
+          <span>{{ icons[item.icon] }}</span>
+        </ng-template>
+      </div>
+
+      <div class="gear-card__body">
+        <div class="gear-card__meta">
+          <p class="gear-card__category">{{ item.category }}</p>
+          <span class="gear-card__equipped">Equipado</span>
+        </div>
+        <h3>{{ item.name }}</h3>
+
+        <div class="gear-card__stores" [attr.aria-label]="'Lojas para ' + item.name">
+          <a
+            *ngFor="let store of item.stores"
+            [href]="store.url"
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            [attr.aria-label]="'Ver ' + item.name + ' na ' + store.name + ' (abre em nova aba)'"
+          >
+            {{ store.name }} <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <p class="arsenal__disclaimer">
+    Alguns links podem ser de afiliado e ajudam a manter a Taverna sem custo extra pra você.
+  </p>
+</section>

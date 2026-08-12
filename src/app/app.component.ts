@@ -8,6 +8,7 @@ import { TwitchSectionComponent } from './twitch-section/twitch-section.componen
 import { YoutubeSectionComponent } from './youtube-section/youtube-section.component';
 import { RevealDirective } from './shared/reveal.directive';
 import { CatEasterEggComponent } from './shared/cat-easter-egg/cat-easter-egg.component';
+import { ArsenalComponent } from './arsenal/arsenal.component';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,7 @@ import { CatEasterEggComponent } from './shared/cat-easter-egg/cat-easter-egg.co
     FooterComponent,
     RevealDirective,
     CatEasterEggComponent,
+    ArsenalComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
