@@ -3,53 +3,76 @@
 }
 
 .twitch-card {
-  background: linear-gradient(180deg, rgba(255, 170, 0, 0.1), rgba(18, 18, 20, 0.96));
-  border-radius: 28px;
-  border: 1px solid rgba(255, 170, 0, 0.14);
-  padding: 1.4rem;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 170, 0, 0.2);
+  background: linear-gradient(180deg, rgba(255, 170, 0, 0.08), rgba(18, 18, 20, 0.88));
+  padding: 1rem;
 }
 
-.twitch-card__header {
-  margin-bottom: 1rem;
+.twitch-card__body {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.twitch-card__identity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.twitch-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 14px;
+  background: rgba(255, 170, 0, 0.18);
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .twitch-card__eyebrow {
   margin: 0;
   color: var(--color-primary);
   text-transform: uppercase;
-  font-size: 0.8rem;
   letter-spacing: 0.14rem;
+  font-size: 0.7rem;
+  font-weight: 700;
 }
 
 .twitch-card h3 {
-  margin: 0.5rem 0 0;
+  margin: 0.2rem 0 0;
   color: var(--color-text);
-  font-size: 1.1rem;
-}
-
-.twitch-card__body {
-  display: grid;
-  gap: 1rem;
-}
-
-.twitch-card__status-group {
-  display: grid;
-  gap: 0.65rem;
+  font-size: 1.25rem;
 }
 
 .twitch-card__schedule {
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.twitch-card__status {
-  color: var(--color-muted);
-  font-size: 0.95rem;
-}
-
-.twitch-card__note {
   margin: 0;
-  color: var(--color-muted);
-  font-size: 0.95rem;
-  line-height: 1.6;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.88rem 1.15rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.button--solid {
+  background: var(--color-primary);
+  color: #121214;
+  box-shadow: 0 10px 24px rgba(255, 170, 0, 0.18);
+}
+
+.button--solid:hover,
+.button--solid:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(255, 170, 0, 0.22);
 }

@@ -1,18 +1,14 @@
 <main class="page-shell" role="main">
   <div class="page-shell__content">
     <app-hero></app-hero>
+
+    <div class="page-shell__primary-actions" aria-label="Principais ações">
+      <app-youtube-section></app-youtube-section>
+      <app-twitch-section></app-twitch-section>
+    </div>
+
     <app-social-links></app-social-links>
-
-    <section class="sections-grid" aria-label="Seções principais">
-      <div class="section-card section-card--wide">
-        <app-youtube-section></app-youtube-section>
-      </div>
-
-      <div class="section-card section-card--stacked">
-        <app-latest-video></app-latest-video>
-        <app-twitch-section></app-twitch-section>
-      </div>
-    </section>
+    <app-latest-video></app-latest-video>
   </div>
 </main>
 

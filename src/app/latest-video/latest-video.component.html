@@ -1,7 +1,7 @@
 <article class="video-card" aria-labelledby="latest-video-title">
   <header class="video-card__header">
     <p class="video-card__eyebrow">Último vídeo</p>
-    <h3 id="latest-video-title">O vídeo mais recente</h3>
+    <h3 id="latest-video-title">No YouTube agora</h3>
   </header>
 
   <div class="video-card__content" *ngIf="video$ | async as video">
@@ -13,10 +13,15 @@
       [attr.aria-label]="'Assistir no YouTube: ' + video.title"
     >
       <img [src]="video.thumbnailUrl" [alt]="video.title" />
+      <span class="video-card__play">▶ Assistir</span>
     </a>
 
     <div class="video-card__info">
-      <p class="video-card__date">{{ video.date }}</p>
+      <p class="video-card__meta">
+        <span>{{ video.date }}</span>
+        <span>•</span>
+        <span>Canal SohJorgeMesmo</span>
+      </p>
       <p class="video-card__title">{{ video.title }}</p>
       <a
         [href]="video.externalUrl"
@@ -24,7 +29,7 @@
         rel="noopener noreferrer"
         class="button button--outline"
       >
-        Assistir no YouTube
+        Assistir →
       </a>
     </div>
   </div>

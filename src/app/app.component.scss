@@ -4,35 +4,22 @@
 
 .page-shell {
   min-height: 100vh;
-  padding: 1.25rem 1rem 0;
-  background: radial-gradient(circle at top left, rgba(255, 170, 0, 0.12), transparent 20%),
-    linear-gradient(180deg, rgba(18, 18, 20, 1), rgba(18, 18, 20, 1));
+  padding: 1.25rem 1rem 2rem;
+  background:
+    radial-gradient(circle at top left, rgba(255, 170, 0, 0.1), transparent 16%),
+    linear-gradient(180deg, #121214 0%, #121214 100%);
 }
 
 .page-shell__content {
-  width: min(100%, calc(var(--container-max, 1100px) - 2rem));
+  width: min(100%, calc(var(--container-max, 1080px) - 2rem));
   margin-inline: auto;
   display: grid;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
-.sections-grid {
+.page-shell__primary-actions {
   display: grid;
-  gap: 1.5rem;
-}
-
-.section-card {
-  display: grid;
-  gap: 1rem;
-}
-
-.section-card--wide {
-  padding: 0;
-}
-
-.section-card--stacked {
-  display: grid;
-  gap: 1rem;
+  gap: 0.8rem;
 }
 
 @media (min-width: 860px) {
@@ -40,8 +27,7 @@
     padding-top: 2rem;
   }
 
-  .sections-grid {
-    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-    align-items: start;
+  .page-shell__primary-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
