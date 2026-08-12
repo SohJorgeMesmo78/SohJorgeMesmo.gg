@@ -29,7 +29,7 @@
         <span class="video-feature__new-badge" *ngIf="isNewVideo(video.date)">NOVA MISSÃO</span>
       </div>
 
-      <p class="video-feature__meta">{{ video.date }}</p>
+      <p class="video-feature__meta">{{ formatPublishedAt(video.date) }}</p>
 
       <a
         [href]="video.externalUrl"

@@ -56,7 +56,9 @@
   background: rgba(255, 170, 0, 0.06);
 }
 
-.link-card__icon { flex: 0 0 auto; color: var(--color-primary); width: 36px; height: 36px; display:flex; align-items:center; justify-content:center; transition: transform 180ms ease; }
+.link-card__icon { flex: 0 0 auto; color: var(--color-primary); width: 36px; height: 36px; display:flex; align-items:center; justify-content:center; transition: transform 180ms ease; animation: icon-wave 3.6s ease-in-out infinite; transform-origin: 50% 80%; }
+.link-card:nth-child(2n) .link-card__icon { animation-delay: 0.45s; }
+.link-card:nth-child(3n) .link-card__icon { animation-delay: 0.9s; }
 .link-card:hover .link-card__icon, .link-card:focus-visible .link-card__icon { transform: translateY(-2px) rotate(-4deg); }
 .link-card__body { min-width: 0; }
 .link-card__title { font-weight:700; color:var(--color-text) }
@@ -64,11 +66,17 @@
 
 .link-card:active { transform: translateY(0); }
 
+@keyframes icon-wave {
+  0%, 16%, 100% { transform: rotate(0); }
+  5% { transform: rotate(-5deg); }
+  10% { transform: rotate(5deg); }
+}
+
 @media (min-width: 900px) {
   .links-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .link-card, .link-card__icon { transition: none; }
+  .link-card, .link-card__icon { animation: none; transition: none; }
   .link-card:hover, .link-card:focus-visible, .link-card:hover .link-card__icon, .link-card:focus-visible .link-card__icon { transform: none; }
 }
