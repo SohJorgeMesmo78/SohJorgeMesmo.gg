@@ -144,13 +144,28 @@ async function getChannelData(channelId: string, apiKey: string) {
   }
 }
 
+function parseYouTubeDuration(duration?: string): number {
+  if (!duration) {
+    return 0;
+  }
+
+  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+
+  if (!match) {
+    return 0;
+  }
+
+  const [, hours = '0', minutes = '0', seconds = '0'] = match;
+  return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
+}
+
 async function getLatestVideo(channelId: string, apiKey: string) {
-  const url = `${YOUTUBE_API_BASE}/search?part=snippet&channelId=${encodeURIComponent(
+  const searchUrl = `${YOUTUBE_API_BASE}/search?part=snippet&channelId=${encodeURIComponent(
     channelId,
-  )}&order=date&type=video&maxResults=1&key=${encodeURIComponent(apiKey)}`;
+  )}&order=date&type=video&maxResults=20&key=${encodeURIComponent(apiKey)}`;
 
   try {
-    const data = await requestJson<{
+    const searchData = await requestJson<{
       items?: Array<{
         id?: { videoId?: string };
         snippet?: {
@@ -163,31 +178,88 @@ async function getLatestVideo(channelId: string, apiKey: string) {
           };
         };
       }>;
-    }>(url);
+    }>(searchUrl);
 
-    const video = data.items?.[0];
+    const videoIds = searchData.items
+      ?.map((item) => item.id?.videoId)
+      .filter((videoId): videoId is string => Boolean(videoId)) ?? [];
 
-    if (!video) {
-      throw new Error('Unable to fetch the latest YouTube video.');
+    if (videoIds.length === 0) {
+      throw new Error('Unable to fetch YouTube uploads for channel selection.');
     }
 
+    const detailsUrl = `${YOUTUBE_API_BASE}/videos?part=snippet,contentDetails,status,liveStreamingDetails&id=${encodeURIComponent(
+      videoIds.join(','),
+    )}&key=${encodeURIComponent(apiKey)}`;
+
+    const detailsData = await requestJson<{
+      items?: Array<{
+        id?: string;
+        snippet?: {
+          title?: string;
+          publishedAt?: string;
+          thumbnails?: {
+            high?: { url?: string };
+            medium?: { url?: string };
+            default?: { url?: string };
+          };
+          liveBroadcastContent?: string;
+        };
+        status?: { uploadStatus?: string };
+        contentDetails?: { duration?: string };
+        liveStreamingDetails?: Record<string, unknown> | null;
+      }>;
+    }>(detailsUrl);
+
+    const detailsById = new Map(
+      (detailsData.items ?? []).map((item) => [item.id, item] as const),
+    );
+
+    const validVideo = searchData.items?.find((item) => {
+      const videoId = item.id?.videoId;
+      if (!videoId) {
+        return false;
+      }
+
+      const details = detailsById.get(videoId);
+      if (!details) {
+        return false;
+      }
+
+      const isLiveVideo = Boolean(details.liveStreamingDetails) || details.snippet?.liveBroadcastContent === 'live';
+      const durationSeconds = parseYouTubeDuration(details.contentDetails?.duration);
+      const isShortVideo = durationSeconds <= 180;
+
+      return !isLiveVideo && !isShortVideo;
+    });
+
+    const selectedVideo = validVideo ?? searchData.items?.[0];
+
+    if (!selectedVideo) {
+      throw new Error('Unable to fetch the latest long-form YouTube video.');
+    }
+
+    const selectedVideoId = selectedVideo.id?.videoId;
+    const selectedDetails = selectedVideoId ? detailsById.get(selectedVideoId) : undefined;
     const thumbnailUrl =
-      video.snippet?.thumbnails?.high?.url ||
-      video.snippet?.thumbnails?.medium?.url ||
-      video.snippet?.thumbnails?.default?.url ||
+      selectedDetails?.snippet?.thumbnails?.high?.url ||
+      selectedVideo.snippet?.thumbnails?.high?.url ||
+      selectedVideo.snippet?.thumbnails?.medium?.url ||
+      selectedVideo.snippet?.thumbnails?.default?.url ||
       latestVideoPlaceholder.thumbnailUrl;
 
     return {
-      videoTitle: video.snippet?.title ?? latestVideoPlaceholder.title,
-      videoPublishedAt: video.snippet?.publishedAt ?? latestVideoPlaceholder.date,
-      videoUrl: video.id?.videoId
-        ? `https://www.youtube.com/watch?v=${video.id.videoId}`
+      videoTitle: selectedDetails?.snippet?.title ?? selectedVideo.snippet?.title ?? latestVideoPlaceholder.title,
+      videoPublishedAt:
+        selectedDetails?.snippet?.publishedAt ?? selectedVideo.snippet?.publishedAt ?? latestVideoPlaceholder.date,
+      videoUrl: selectedVideoId
+        ? `https://www.youtube.com/watch?v=${selectedVideoId}`
         : latestVideoPlaceholder.externalUrl,
       thumbnailUrl,
     };
   } catch (error) {
     const typedError = error as YoutubeCallError;
-    typedError.url = url;
+    typedError.url = searchUrl;
     throw typedError;
   }
 }

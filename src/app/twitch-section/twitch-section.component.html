@@ -1,12 +1,5 @@
-<article class="live-strip" aria-label="Twitch" *ngIf="twitch$ | async as twitch">
-  <p class="live-strip__label">Twitch</p>
-  <p class="live-strip__value">{{ twitch.schedule }}</p>
-  <a
-    [href]="twitch.externalUrl"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="live-strip__button"
-  >
-    Assistir na Twitch
-  </a>
+<article class="status-strip" aria-label="Status da Twitch">
+  <p class="status-strip__label">Twitch</p>
+  <p class="status-strip__value">● Offline agora</p>
+  <p class="status-strip__meta">Live às 19h</p>
 </article>

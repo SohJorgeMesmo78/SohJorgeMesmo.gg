@@ -2,11 +2,9 @@
   display: block;
 }
 
-.live-strip {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.7rem 0.9rem;
+.status-strip {
+  display: grid;
+  gap: 0.2rem;
   min-height: 3.5rem;
   padding: 0.8rem 0.9rem;
   border-radius: 18px;
@@ -14,7 +12,7 @@
   background: linear-gradient(180deg, rgba(255, 170, 0, 0.08), rgba(18, 18, 20, 0.72));
 }
 
-.live-strip__label {
+.status-strip__label {
   color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.12rem;
@@ -22,18 +20,12 @@
   font-weight: 700;
 }
 
-.live-strip__value {
+.status-strip__value {
   color: var(--color-text);
   font-weight: 700;
 }
 
-.live-strip__button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.65rem 0.9rem;
-  border-radius: 999px;
-  background: var(--color-primary);
-  color: #121214;
-  font-weight: 700;
+.status-strip__meta {
+  color: var(--color-muted);
+  font-size: 0.82rem;
 }

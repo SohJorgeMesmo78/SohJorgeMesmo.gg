@@ -13,11 +13,23 @@
     >
       <img [src]="video.thumbnailUrl" [alt]="video.title" />
       <span class="video-feature__play">▶ Assistir</span>
+      <span class="video-feature__quest" *ngIf="isNewVideo(video.date)">!</span>
     </a>
 
     <div class="video-feature__info">
+      <div class="video-feature__meta-row" *ngIf="channel$ | async as channel">
+        <span>{{ channel.name }}</span>
+        <span>•</span>
+        <span>{{ channel.subscriberCount }} inscritos</span>
+      </div>
+
+      <div class="video-feature__title-row">
+        <h2 id="latest-video-title">{{ video.title }}</h2>
+        <span class="video-feature__new-badge" *ngIf="isNewVideo(video.date)">NOVA MISSÃO</span>
+      </div>
+
       <p class="video-feature__meta">{{ video.date }}</p>
-      <h2 id="latest-video-title">{{ video.title }}</h2>
+
       <a
         [href]="video.externalUrl"
         target="_blank"

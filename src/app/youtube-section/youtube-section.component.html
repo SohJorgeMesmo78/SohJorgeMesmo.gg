@@ -1,12 +1,5 @@
-<article class="channel-strip" aria-label="Canal do YouTube" *ngIf="channel$ | async as channel">
-  <p class="channel-strip__label">YouTube</p>
-  <p class="channel-strip__value">{{ channel.name }} • {{ channel.subscriberCount }} inscritos</p>
-  <a
-    [href]="channel.externalUrl"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="channel-strip__link"
-  >
-    Acessar canal
-  </a>
+<article class="status-strip" aria-label="Status do YouTube">
+  <p class="status-strip__label">YouTube</p>
+  <p class="status-strip__value">● Offline agora</p>
+  <p class="status-strip__meta">Live às 19h</p>
 </article>

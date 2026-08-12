@@ -1,6 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ContentService } from '../services/content.service';
 
 @Component({
   selector: 'app-twitch-section',
@@ -9,7 +8,4 @@ import { ContentService } from '../services/content.service';
   templateUrl: './twitch-section.component.html',
   styleUrls: ['./twitch-section.component.scss'],
 })
-export class TwitchSectionComponent {
-  private readonly contentService = inject(ContentService);
-  readonly twitch$ = this.contentService.getTwitchInfo();
-}
+export class TwitchSectionComponent {}
