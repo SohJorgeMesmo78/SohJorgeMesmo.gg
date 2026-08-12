@@ -1,6 +1,18 @@
 const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3';
 const CHANNEL_LOOKUP_QUERY = 'SohJorgeMesmo-gg';
+const MAX_UPLOAD_PAGES = 3;
+const MAX_UPLOAD_RESULTS_PER_PAGE = 50;
 const isDevelopment = process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'development' || (!process.env.VERCEL_ENV && !process.env.NODE_ENV);
+
+function logSafeStep(stage, details = {}) {
+  const payload = {
+    stage,
+    keyConfigured: Boolean(process.env.YOUTUBE_API_KEY?.trim()),
+    ...details,
+  };
+
+  console.log('[YouTube API]', JSON.stringify(payload));
+}
 
 const fallbackPayload = {
   channelUrl: 'https://www.youtube.com/@SohJorgeMesmo-gg',
@@ -35,20 +47,43 @@ function buildErrorPayload({ message, status, url, keyConfigured }) {
   };
 }
 
-async function requestJson(url) {
+async function requestJson(url, stage) {
   const response = await fetch(url);
+  const rawText = await response.text();
 
   if (!response.ok) {
-    const message = await response.text();
+    const message = rawText ? rawText.slice(0, 1000) : 'No response body';
     const error = new Error(
       `YouTube API request failed (${response.status}): ${message}`,
     );
     error.status = response.status;
     error.url = url;
+    logSafeStep(stage, {
+      status: response.status,
+      ok: false,
+      message,
+    });
     throw error;
   }
 
-  return response.json();
+  let json;
+  try {
+    json = rawText ? JSON.parse(rawText) : {};
+  } catch (parseError) {
+    logSafeStep(stage, {
+      status: response.status,
+      ok: true,
+      parseError: parseError.message,
+    });
+    return {};
+  }
+
+  logSafeStep(stage, {
+    status: response.status,
+    ok: true,
+  });
+
+  return json;
 }
 
 async function findChannelId(apiKey) {
@@ -57,8 +92,13 @@ async function findChannelId(apiKey) {
   )}&key=${encodeURIComponent(apiKey)}`;
 
   try {
-    const data = await requestJson(url);
+    const data = await requestJson(url, 'channel');
     const channelId = data.items?.[0]?.id?.channelId;
+
+    logSafeStep('channel', {
+      resultCount: data.items?.length ?? 0,
+      resolved: Boolean(channelId),
+    });
 
     if (!channelId) {
       throw new Error('Unable to resolve YouTube channel id for SohJorgeMesmo.');
@@ -77,8 +117,13 @@ async function getChannelData(channelId, apiKey) {
   )}&key=${encodeURIComponent(apiKey)}`;
 
   try {
-    const data = await requestJson(url);
+    const data = await requestJson(url, 'channel');
     const result = data.items?.[0];
+
+    logSafeStep('channel', {
+      subscriberCount: result?.statistics?.subscriberCount ?? 'not-found',
+      channelTitle: result?.snippet?.title ?? 'not-found',
+    });
 
     if (!result) {
       throw new Error('Unable to fetch YouTube channel data.');
@@ -110,72 +155,117 @@ function parseYouTubeDuration(duration) {
 }
 
 async function getLatestVideo(channelId, apiKey) {
-  const searchUrl = `${YOUTUBE_API_BASE}/search?part=snippet&channelId=${encodeURIComponent(
-    channelId,
-  )}&order=date&type=video&maxResults=20&key=${encodeURIComponent(apiKey)}`;
+  let nextPageToken;
+  let pageIndex = 0;
+  let latestLongFormVideo = null;
 
-  try {
-    const searchData = await requestJson(searchUrl);
-    const videoIds = (searchData.items ?? [])
-      .map((item) => item.id?.videoId)
-      .filter(Boolean);
+  while (pageIndex < MAX_UPLOAD_PAGES) {
+    const searchUrl = `${YOUTUBE_API_BASE}/search?part=snippet&channelId=${encodeURIComponent(
+      channelId,
+    )}&order=date&type=video&maxResults=${MAX_UPLOAD_RESULTS_PER_PAGE}${nextPageToken ? `&pageToken=${encodeURIComponent(nextPageToken)}` : ''}&key=${encodeURIComponent(apiKey)}`;
 
-    if (videoIds.length === 0) {
-      throw new Error('Unable to fetch YouTube uploads for channel selection.');
-    }
+    pageIndex += 1;
 
-    const detailsUrl = `${YOUTUBE_API_BASE}/videos?part=snippet,contentDetails,status,liveStreamingDetails&id=${encodeURIComponent(
-      videoIds.join(','),
-    )}&key=${encodeURIComponent(apiKey)}`;
-    const detailsData = await requestJson(detailsUrl);
-    const detailsById = new Map((detailsData.items ?? []).map((item) => [item.id, item]));
+    try {
+      const searchData = await requestJson(searchUrl, 'uploads');
+      const items = searchData.items ?? [];
+      const videoIds = items
+        .map((item) => item.id?.videoId)
+        .filter(Boolean);
 
-    const validVideo = (searchData.items ?? []).find((item) => {
-      const videoId = item.id?.videoId;
-      if (!videoId) {
-        return false;
+      logSafeStep('uploads', {
+        page: pageIndex,
+        uploadsFound: items.length,
+        ids: videoIds,
+        hasNextPage: Boolean(searchData.nextPageToken),
+      });
+
+      if (videoIds.length === 0) {
+        break;
       }
 
-      const details = detailsById.get(videoId);
-      if (!details) {
-        return false;
+      const detailsUrl = `${YOUTUBE_API_BASE}/videos?part=snippet,contentDetails,status,liveStreamingDetails&id=${encodeURIComponent(
+        videoIds.join(','),
+      )}&key=${encodeURIComponent(apiKey)}`;
+      const detailsData = await requestJson(detailsUrl, 'video-details');
+      const detailsById = new Map((detailsData.items ?? []).map((item) => [item.id, item]));
+
+      const candidates = items.map((item) => {
+        const videoId = item.id?.videoId;
+        const details = videoId ? detailsById.get(videoId) : undefined;
+        const durationSeconds = parseYouTubeDuration(details?.contentDetails?.duration);
+        const isLiveVideo = Boolean(details?.liveStreamingDetails) || details?.snippet?.liveBroadcastContent === 'live';
+        const isShortVideo = durationSeconds <= 180;
+        const reason = !details
+          ? 'missing-video-details'
+          : isLiveVideo
+            ? 'live-or-streaming-video'
+            : isShortVideo
+              ? 'short-video-under-3-min'
+              : null;
+
+        return {
+          videoId,
+          title: details?.snippet?.title ?? item.snippet?.title ?? 'unknown-title',
+          durationSeconds,
+          hasLiveStreamingDetails: Boolean(details?.liveStreamingDetails),
+          isLiveVideo,
+          isShortVideo,
+          reason,
+        };
+      });
+
+      logSafeStep('filter', {
+        page: pageIndex,
+        videosConsulted: candidates.length,
+        remainingAfterFilter: candidates.filter((candidate) => !candidate.reason).length,
+        discarded: candidates.filter((candidate) => candidate.reason).map((candidate) => ({
+          videoId: candidate.videoId,
+          reason: candidate.reason,
+          durationSeconds: candidate.durationSeconds,
+          hasLiveStreamingDetails: candidate.hasLiveStreamingDetails,
+        })),
+      });
+
+      const firstValidVideo = candidates.find((candidate) => !candidate.reason);
+      if (firstValidVideo) {
+        latestLongFormVideo = firstValidVideo;
+        break;
       }
 
-      const isLiveVideo = Boolean(details.liveStreamingDetails) || details.snippet?.liveBroadcastContent === 'live';
-      const durationSeconds = parseYouTubeDuration(details.contentDetails?.duration);
-      const isShortVideo = durationSeconds <= 180;
+      if (!searchData.nextPageToken) {
+        break;
+      }
 
-      return !isLiveVideo && !isShortVideo;
-    });
-
-    const selectedVideo = validVideo ?? (searchData.items ?? [])[0];
-
-    if (!selectedVideo) {
-      throw new Error('Unable to fetch the latest long-form YouTube video.');
+      nextPageToken = searchData.nextPageToken;
+    } catch (error) {
+      error.url = searchUrl;
+      throw error;
     }
-
-    const selectedVideoId = selectedVideo.id?.videoId;
-    const selectedDetails = selectedVideoId ? detailsById.get(selectedVideoId) : undefined;
-    const thumbnailUrl =
-      selectedDetails?.snippet?.thumbnails?.high?.url ||
-      selectedVideo.snippet?.thumbnails?.high?.url ||
-      selectedVideo.snippet?.thumbnails?.medium?.url ||
-      selectedVideo.snippet?.thumbnails?.default?.url ||
-      fallbackPayload.thumbnailUrl;
-
-    return {
-      videoTitle: selectedDetails?.snippet?.title ?? selectedVideo.snippet?.title ?? fallbackPayload.videoTitle,
-      videoPublishedAt:
-        selectedDetails?.snippet?.publishedAt ?? selectedVideo.snippet?.publishedAt ?? fallbackPayload.videoPublishedAt,
-      videoUrl: selectedVideoId
-        ? `https://www.youtube.com/watch?v=${selectedVideoId}`
-        : fallbackPayload.videoUrl,
-      thumbnailUrl,
-    };
-  } catch (error) {
-    error.url = searchUrl;
-    throw error;
   }
+
+  if (!latestLongFormVideo) {
+    throw new Error('Unable to fetch the latest long-form YouTube video after scanning uploads pages.');
+  }
+
+  const selectedVideoId = latestLongFormVideo.videoId;
+  const selectedDetails = selectedVideoId ? new Map((await requestJson(
+    `${YOUTUBE_API_BASE}/videos?part=snippet,contentDetails,status,liveStreamingDetails&id=${encodeURIComponent(selectedVideoId)}&key=${encodeURIComponent(apiKey)}`,
+    'video-details',
+  )).items ?? []).get(selectedVideoId) : undefined;
+
+  const thumbnailUrl =
+    selectedDetails?.snippet?.thumbnails?.high?.url ||
+    selectedDetails?.snippet?.thumbnails?.medium?.url ||
+    selectedDetails?.snippet?.thumbnails?.default?.url ||
+    fallbackPayload.thumbnailUrl;
+
+  return {
+    videoTitle: selectedDetails?.snippet?.title ?? fallbackPayload.videoTitle,
+    videoPublishedAt: selectedDetails?.snippet?.publishedAt ?? fallbackPayload.videoPublishedAt,
+    videoUrl: selectedVideoId ? `https://www.youtube.com/watch?v=${selectedVideoId}` : fallbackPayload.videoUrl,
+    thumbnailUrl,
+  };
 }
 
 module.exports = async function handler(req, res) {
