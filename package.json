@@ -4,6 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "dev": "concurrently --kill-others --names frontend,backend --prefix-colors cyan,magenta \"npm:start\" \"npm:api:dev\"",
+    "api:dev": "node --watch scripts/local-api-server.cjs",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -34,6 +36,8 @@
     "@types/express": "^4.17.17",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^18.18.0",
+    "concurrently": "^9.2.0",
+    "dotenv": "^17.2.1",
     "@vercel/node": "^5.9.9",
     "jasmine-core": "~5.5.0",
     "karma": "~6.4.0",

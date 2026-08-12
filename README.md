@@ -1,85 +1,92 @@
-# SohJorgeMesmoGg
+# SohJorgeMesmo.gg
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.7.
+Hub oficial do SohJorgeMesmo para reunir lives, vídeos e redes sociais em um só lugar — porque a próxima jogatina deve estar a um clique de distância.
 
-## Development server
+Produção: [sohjorgemesmo.seteoito.dev](https://sohjorgemesmo.seteoito.dev)
 
-To start a local Angular development server, run:
+## Sobre
+
+O projeto substitui páginas genéricas de link-in-bio por uma experiência própria, mobile-first e conectada ao conteúdo real do canal. A página destaca a identidade do criador, informa o status das lives e apresenta o vídeo longo mais recente do YouTube.
+
+## Funcionalidades
+
+- Status online/offline da Twitch, com título, jogo e espectadores quando disponíveis.
+- Área de status de Twitch e YouTube com horário habitual das lives.
+- Último vídeo longo do YouTube, excluindo Shorts, lives e VODs.
+- Nome do canal e quantidade de inscritos.
+- Tratamento de “nova missão” para vídeos publicados há até 36 horas.
+- Hub de links para YouTube, Twitch, Instagram, TikTok, X e LivePix.
+- Identificador social rotativo no Hero.
+- Microinterações, progresso de scroll e suporte a `prefers-reduced-motion`.
+- Layout responsivo, SSR, hydration e prerender.
+
+## Stack
+
+- Angular 19.1 e Angular CLI 19.1.7
+- TypeScript 5.7
+- SCSS
+- Angular SSR
+- Node.js e Express 4.18
+- Vercel Functions
+- YouTube Data API
+- Twitch API
+
+## Rodando localmente
+
+Instale as dependências:
 
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## YouTube API and Vercel local testing
-
-This project includes a server-side YouTube endpoint at `/api/youtube`.
-
-For local development with Vercel Functions, copy the example file and add the real value:
+Copie o arquivo de exemplo e preencha as credenciais locais:
 
 ```bash
 cp .env.local.example .env.local
 ```
 
-Then set your key:
+Além de `YOUTUBE_API_KEY`, adicione ao `.env.local` as duas variáveis da Twitch listadas abaixo. Depois, inicie todo o ambiente:
+
+```bash
+npm run dev
+```
+
+Esse comando inicia o frontend em `http://localhost:4200` e o backend local em `http://localhost:3000`, com logs separados. O Angular Dev Server encaminha `/api/*` para o backend através de `proxy.conf.json`.
+
+## Variáveis de ambiente
 
 ```env
-YOUTUBE_API_KEY=your_youtube_api_key_here
+YOUTUBE_API_KEY=
+TWITCH_CLIENT_ID=
+TWITCH_CLIENT_SECRET=
 ```
 
-If you want to test the Vercel Function behavior locally, use:
+Use apenas valores locais em `.env.local`. Nunca envie esse arquivo ao repositório.
 
-```bash
-npx vercel dev
-```
+## Scripts
 
-This executes the serverless function route at `http://localhost:3000/api/youtube` and is the recommended workflow for verifying the same behavior used in production on Vercel.
+| Comando | Finalidade |
+| --- | --- |
+| `npm run dev` | Inicia frontend e backend local juntos. |
+| `npm start` | Inicia somente o Angular Dev Server em `:4200`. |
+| `npm run api:dev` | Inicia somente as APIs locais em `:3000`, com watch. |
+| `npm run build` | Gera o build de produção, incluindo bundles browser e server. |
+| `npm run vercel:dev` | Executa o ambiente local da Vercel. |
+| `npm run serve:ssr:SohJorgeMesmo.gg` | Serve o bundle SSR já compilado. |
 
-> `ng serve` does not automatically run Vercel Functions, so the recommended local check for the API route is `npx vercel dev`.
+## Estrutura do projeto
 
-## Code scaffolding
+- `src/app/` — componentes, serviços e configuração do frontend Angular.
+- `src/server.ts` — entrada do servidor Angular SSR e rotas Express.
+- `api/` — funções serverless de YouTube e Twitch usadas pela Vercel.
+- `scripts/` — servidor auxiliar das APIs no desenvolvimento local.
+- `proxy.conf.json` — proxy `/api/*` do Angular Dev Server.
+- `public/` — arquivos estáticos.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Deploy
 
-```bash
-ng generate component component-name
-```
+O projeto é publicado na Vercel. Em produção, o frontend continua usando URLs relativas `/api/*`, resolvidas pelas funções serverless do mesmo repositório.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Segurança
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+As credenciais de YouTube e Twitch ficam exclusivamente no backend. O navegador acessa as integrações por `/api/youtube` e `/api/twitch`; `.env.local` está no `.gitignore` e não deve ser commitado.

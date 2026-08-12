@@ -1,4 +1,4 @@
-import { afterNextRender, Component, DestroyRef, inject } from '@angular/core';
+import { afterNextRender, Component, DestroyRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { heroData } from '../hub.config';
 import { IconComponent } from '../shared/icon.component';
@@ -16,27 +16,39 @@ export class HeroComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly items = [
-    { name: 'instagram', label: 'SohJorgeMesmo.gg', url: 'https://www.instagram.com/sohjorgemesmo.gg' },
-    { name: 'x', label: 'SohJorgeMesmo78', url: 'https://x.com/sohjorgemesmo78' },
-    { name: 'twitch', label: 'SohJorgeMesmo', url: 'https://www.twitch.tv/sohjorgemesmo' },
     { name: 'youtube', label: 'SohJorgeMesmo', url: 'https://www.youtube.com/@SohJorgeMesmo-gg' },
+    { name: 'twitch', label: 'SohJorgeMesmo', url: 'https://www.twitch.tv/sohjorgemesmo' },
+    { name: 'instagram', label: 'SohJorgeMesmo.gg', url: 'https://www.instagram.com/sohjorgemesmo.gg' },
     { name: 'tiktok', label: 'SohJorgeMesmo.gg', url: 'https://www.tiktok.com/@sohjorgemesmo.gg' },
+    { name: 'x', label: 'SohJorgeMesmo78', url: 'https://x.com/sohjorgemesmo78' },
   ];
 
-  currentIndex = 0;
-  isChanging = false;
+  readonly currentIndex = signal(0);
+  readonly isChanging = signal(false);
 
   constructor() {
     afterNextRender(() => {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let transitionTimer: number | undefined;
+
       const timer = window.setInterval(() => {
-        this.isChanging = true;
-        window.setTimeout(() => {
-          this.currentIndex = (this.currentIndex + 1) % this.items.length;
-          this.isChanging = false;
+        if (reducedMotion.matches) {
+          this.currentIndex.update((index) => (index + 1) % this.items.length);
+          return;
+        }
+
+        this.isChanging.set(true);
+        transitionTimer = window.setTimeout(() => {
+          this.currentIndex.update((index) => (index + 1) % this.items.length);
+          this.isChanging.set(false);
+          transitionTimer = undefined;
         }, 180);
-      }, 3500);
-      this.destroyRef.onDestroy(() => window.clearInterval(timer));
+      }, 3000);
+
+      this.destroyRef.onDestroy(() => {
+        window.clearInterval(timer);
+        if (transitionTimer !== undefined) window.clearTimeout(transitionTimer);
+      });
     });
   }
 
