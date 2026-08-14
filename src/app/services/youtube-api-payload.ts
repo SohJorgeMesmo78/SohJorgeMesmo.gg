@@ -1,7 +1,6 @@
 export interface YoutubeApiPayload {
   available: boolean;
   videoAvailable: boolean;
-  isLive: boolean;
   channelUrl: string;
   channelName: string;
   subscriberCount: string;

@@ -73,6 +73,18 @@ app.get('/api/youtube', async (_req, res) => {
   }
 });
 
+app.get('/api/youtube-live', async (_req, res) => {
+  const { fetchYoutubeLiveData } = await import('./app/services/youtube-live-data');
+  const data = await fetchYoutubeLiveData();
+  const isDevelopment = process.env['NODE_ENV'] === 'development' || !process.env['NODE_ENV'];
+  res.setHeader('Cache-Control', isDevelopment || !data.available ? 'no-store' : 'public, max-age=0, s-maxage=45');
+  if (!isDevelopment && data.available) {
+    res.setHeader('CDN-Cache-Control', 'public, max-age=45');
+    res.setHeader('Vercel-CDN-Cache-Control', 'public, max-age=45');
+  }
+  return res.json(data);
+});
+
 app.get('/api/twitch', async (_req, res) => {
   try {
     const { fetchTwitchData } = await import('./app/services/twitch-data');

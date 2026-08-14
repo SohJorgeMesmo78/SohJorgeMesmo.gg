@@ -12,10 +12,13 @@
       <app-cat-easter-egg class="page-shell__nico-cat" cat="nico" label="Nico"></app-cat-easter-egg>
     </div>
 
+    <app-social-links appReveal></app-social-links>
     <app-latest-video appReveal></app-latest-video>
     <app-arsenal appReveal></app-arsenal>
-    <app-social-links appReveal></app-social-links>
   </div>
 </main>
 
 <app-footer></app-footer>
+@defer (when devControlsEnabled) {
+  <app-dev-controls></app-dev-controls>
+}

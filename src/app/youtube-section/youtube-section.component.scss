@@ -34,9 +34,9 @@
 .status-strip__dot { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--color-muted); opacity: 0.55; }
 
 .status-strip--live {
-  border-color: rgba(255, 170, 0, 0.32);
-  background: linear-gradient(180deg, rgba(255, 170, 0, 0.09), rgba(18, 18, 20, 0.78));
-  box-shadow: 0 0 32px rgba(255, 170, 0, 0.13);
+  border-color: rgba(255, 59, 92, 0.46);
+  background: linear-gradient(180deg, rgba(255, 59, 92, 0.1), rgba(18, 18, 20, 0.78));
+  box-shadow: 0 0 32px rgba(255, 59, 92, 0.18);
   animation: live-glow 5s ease-in-out infinite;
 }
 
@@ -45,13 +45,13 @@
   position: absolute;
   inset: 15% 8%;
   z-index: -1;
-  background: rgba(255, 170, 0, 0.2);
+  background: rgba(255, 59, 92, 0.24);
   filter: blur(24px);
 }
 
-@keyframes live-glow { 50% { box-shadow: 0 0 42px rgba(255, 170, 0, 0.19); } }
+@keyframes live-glow { 50% { box-shadow: 0 0 44px rgba(255, 59, 92, 0.26); } }
 
-.status-strip__value--live { color: #ffb4b4; }
+.status-strip__value--live { color: #ff6b83; }
 
 .status-strip__cta {
   display: inline-flex;

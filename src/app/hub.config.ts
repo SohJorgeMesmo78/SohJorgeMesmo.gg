@@ -39,6 +39,7 @@ export interface LatestVideoInfo {
 }
 
 export interface TwitchInfo {
+  available?: boolean;
   externalUrl: string;
   schedule: string;
   title: string;
@@ -55,7 +56,7 @@ export interface YouTubeLiveStatus {
   isLive: boolean;
   status: string;
   note: string;
-  statusSource: 'youtube' | 'twitch-fallback';
+  statusSource: 'youtube' | 'twitch-fallback' | 'unknown';
 }
 
 export const heroData: HeroData = {
@@ -133,7 +134,7 @@ export const socialLinks: SocialLink[] = [
 
 export const youtubeChannelPlaceholder: YouTubeChannelInfo = {
   externalUrl: 'https://www.youtube.com/@SohJorgeMesmo-gg',
-  name: 'SohJorgeMesmo',
+  name: 'SohJorgeMesmo-gg',
   description: 'Canal pronto para exibir dados reais via YouTube Data API. Sem valores fictícios, apenas estrutura preparada.',
   channelLabel: 'Canal no YouTube',
   statusNote: 'Inscritos e estatísticas serão preenchidos em breve com integração oficial.',

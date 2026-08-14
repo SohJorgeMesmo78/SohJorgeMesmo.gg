@@ -17,12 +17,14 @@ console.log('[Local API] Environment loaded.', {
 });
 
 const youtubeHandler = require('../api/youtube');
+const youtubeLiveHandler = require('../api/youtube-live');
 const twitchHandler = require('../api/twitch');
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
 
 app.all('/api/youtube', youtubeHandler);
+app.all('/api/youtube-live', youtubeLiveHandler);
 app.all('/api/twitch', twitchHandler);
 
 app.listen(port, () => {

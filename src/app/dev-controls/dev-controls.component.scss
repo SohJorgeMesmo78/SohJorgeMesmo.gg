@@ -1,0 +1,10 @@
+:host { position: fixed; right: 0.75rem; bottom: 0.75rem; z-index: 2000; font-family: ui-monospace, monospace; }
+.dev-controls__toggle { width: 2.65rem; height: 2.65rem; border: 1px solid #555; border-radius: 50%; background: #202027; color: #fff; cursor: pointer; box-shadow: 0 5px 18px #0008; }
+.dev-controls__panel { position: absolute; right: 0; bottom: 3.15rem; width: min(18rem, calc(100vw - 1.5rem)); display: grid; gap: 0.65rem; padding: 0.8rem; border: 1px solid #555; border-radius: 10px; background: #18181f; color: #f5f5f5; box-shadow: 0 12px 32px #000b; font-size: 0.74rem; }
+header { display: flex; justify-content: space-between; align-items: center; }
+header button { background: transparent; color: #fff; font-size: 1.15rem; cursor: pointer; }
+label { display: grid; grid-template-columns: 1fr 7.5rem; align-items: center; gap: 0.5rem; }
+select, .dev-controls__reset { min-height: 2rem; border: 1px solid #666; border-radius: 6px; background: #282833; color: #fff; }
+.dev-controls__reset { cursor: pointer; }
+button:focus-visible, select:focus-visible { outline: 2px solid #ffaa00; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

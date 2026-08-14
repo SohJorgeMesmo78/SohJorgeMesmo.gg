@@ -78,6 +78,30 @@
 
 .video-feature__thumbnail--new::before {
   opacity: 1;
+  inset: -18%;
+  width: auto;
+  height: auto;
+  background: radial-gradient(
+    ellipse at 72% 18%,
+    rgba(255, 170, 0, 0.58) 0%,
+    rgba(255, 170, 0, 0.26) 32%,
+    transparent 72%
+  );
+}
+
+.video-feature__thumbnail--new {
+  box-shadow:
+    0 0 22px rgba(255, 170, 0, 0.32),
+    0 0 62px rgba(255, 170, 0, 0.2);
+  animation: g 5.5s ease-in-out infinite;
+}
+
+@keyframes g {
+  50% {
+    box-shadow:
+      0 0 28px rgba(255, 170, 0, 0.4),
+      0 0 78px rgba(255, 170, 0, 0.25);
+  }
 }
 
 .video-feature__play {
@@ -208,5 +232,6 @@
     transition: none;
   }
 
+  .video-feature__thumbnail--new,
   .video-feature__quest { animation: none; }
 }

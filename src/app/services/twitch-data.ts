@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 export interface TwitchApiPayload {
+  available?: boolean;
   externalUrl: string;
   schedule: string;
   title: string;
@@ -35,6 +36,7 @@ const TOKENS_BY_KEY = new Map<string, { accessToken: string; expiresAt: number }
 const isDevelopment = process.env['NODE_ENV'] === 'development' || process.env['VERCEL_ENV'] === 'development' || (!process.env['VERCEL_ENV'] && !process.env['NODE_ENV']);
 
 const fallbackPayload: TwitchApiPayload = {
+  available: false,
   externalUrl: 'https://www.twitch.tv/sohjorgemesmo',
   schedule: 'Live às 19h',
   title: 'Twitch',
@@ -190,6 +192,7 @@ export async function fetchTwitchData(): Promise<TwitchApiPayload> {
     if (!isLive) {
       return {
         ...fallbackPayload,
+        available: true,
         title: 'Twitch',
         status: 'Offline agora',
         note: 'Live às 19h',
@@ -197,6 +200,7 @@ export async function fetchTwitchData(): Promise<TwitchApiPayload> {
     }
 
     return {
+      available: true,
       externalUrl: 'https://www.twitch.tv/sohjorgemesmo',
       schedule: 'Live às 19h',
       title: 'Twitch',

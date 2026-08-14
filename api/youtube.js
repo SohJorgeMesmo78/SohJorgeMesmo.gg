@@ -18,7 +18,6 @@ function logSafeStep(stage, details = {}) {
 const fallbackPayload = {
   available: false,
   videoAvailable: false,
-  isLive: false,
   channelUrl: 'https://www.youtube.com/@SohJorgeMesmo-gg',
   channelName: 'SohJorgeMesmo',
   subscriberCount: '---',
@@ -341,7 +340,6 @@ module.exports = async function handler(req, res) {
         latestVideo.videoPublishedAt &&
         !Number.isNaN(Date.parse(latestVideo.videoPublishedAt))
       ),
-      isLive: latestVideo.isLive,
       channelUrl: `https://www.youtube.com/channel/${YOUTUBE_CHANNEL_ID}`,
       channelName: channelData.channelName,
       subscriberCount: channelData.subscriberCount,

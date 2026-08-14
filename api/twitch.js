@@ -1,5 +1,6 @@
 const TWITCH_CHANNEL_LOGIN = 'sohjorgemesmo';
 const fallbackPayload = {
+  available: false,
   externalUrl: 'https://www.twitch.tv/sohjorgemesmo',
   schedule: 'Live às 19h',
   title: 'Twitch',
@@ -172,6 +173,7 @@ module.exports = async function handler(req, res) {
     if (!isLive) {
       return res.status(200).json({
         ...fallbackPayload,
+        available: true,
         title: 'Twitch',
         status: 'Offline agora',
         note: 'Live às 19h',
@@ -179,6 +181,7 @@ module.exports = async function handler(req, res) {
     }
 
     return res.status(200).json({
+      available: true,
       externalUrl: 'https://www.twitch.tv/sohjorgemesmo',
       schedule: 'Live às 19h',
       title: 'Twitch',

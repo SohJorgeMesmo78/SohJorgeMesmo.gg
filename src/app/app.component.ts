@@ -1,4 +1,4 @@
-import { afterNextRender, Component, DestroyRef, inject } from '@angular/core';
+import { afterNextRender, Component, DestroyRef, inject, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FooterComponent } from './footer/footer.component';
 import { HeroComponent } from './hero/hero.component';
@@ -9,6 +9,7 @@ import { YoutubeSectionComponent } from './youtube-section/youtube-section.compo
 import { RevealDirective } from './shared/reveal.directive';
 import { CatEasterEggComponent } from './shared/cat-easter-egg/cat-easter-egg.component';
 import { ArsenalComponent } from './arsenal/arsenal.component';
+import { DevControlsComponent } from './dev-controls/dev-controls.component';
 
 @Component({
   selector: 'app-root',
@@ -24,11 +25,13 @@ import { ArsenalComponent } from './arsenal/arsenal.component';
     RevealDirective,
     CatEasterEggComponent,
     ArsenalComponent,
+    DevControlsComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
+  readonly devControlsEnabled = isDevMode();
   private readonly destroyRef = inject(DestroyRef);
 
   constructor() {

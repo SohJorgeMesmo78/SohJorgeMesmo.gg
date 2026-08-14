@@ -65,7 +65,6 @@ function createYoutubeFallbackPayload(): YoutubeApiPayload {
   return {
     available: false,
     videoAvailable: false,
-    isLive: false,
     channelUrl: youtubeChannelPlaceholder.externalUrl,
     channelName: youtubeChannelPlaceholder.name,
     subscriberCount: youtubeChannelPlaceholder.subscriberCount,
@@ -328,7 +327,6 @@ export async function fetchYoutubeData(): Promise<YoutubeApiPayload> {
         latestVideo.videoPublishedAt &&
         !Number.isNaN(Date.parse(latestVideo.videoPublishedAt))
       ),
-      isLive: latestVideo.isLive,
       channelUrl: `https://www.youtube.com/channel/${YOUTUBE_CHANNEL_ID}`,
       channelName: channelData.channelName,
       subscriberCount: channelData.subscriberCount,

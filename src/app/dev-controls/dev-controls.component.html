@@ -1,0 +1,30 @@
+<div class="dev-controls">
+  <button class="dev-controls__toggle" type="button" (click)="open = !open" [attr.aria-expanded]="open" aria-controls="dev-controls-panel" aria-label="Abrir Dev Controls">🛠</button>
+
+  <section *ngIf="open" id="dev-controls-panel" class="dev-controls__panel" aria-label="Dev Controls">
+    <header><strong>DEV CONTROLS</strong><button type="button" (click)="open = false" aria-label="Fechar Dev Controls">×</button></header>
+
+    <label>Twitch
+      <select [value]="controls.twitchMode$ | async" (change)="setTwitch($any($event.target).value)">
+        <option value="real">Real</option><option value="force-offline">Offline</option><option value="force-live">Live</option>
+      </select>
+    </label>
+    <label>YouTube Live
+      <select [value]="controls.youtubeMode$ | async" (change)="setYoutube($any($event.target).value)">
+        <option value="real">Real</option><option value="force-offline">Offline</option><option value="force-live">Live</option><option value="force-unavailable">Indisponível</option>
+      </select>
+    </label>
+    <label>Último vídeo
+      <select [value]="controls.videoMode$ | async" (change)="setVideo($any($event.target).value)">
+        <option value="real">Real</option><option value="force-normal">Normal</option><option value="force-new">Novo</option>
+      </select>
+    </label>
+    <label>YouTube Content API
+      <select [value]="controls.youtubeContentMode$ | async" (change)="setContent($any($event.target).value)">
+        <option value="real">Real</option><option value="force-success">Success</option><option value="force-error">Error</option>
+      </select>
+    </label>
+
+    <button class="dev-controls__reset" type="button" (click)="controls.reset()">Resetar</button>
+  </section>
+</div>
