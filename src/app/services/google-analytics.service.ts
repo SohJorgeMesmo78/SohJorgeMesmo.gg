@@ -7,7 +7,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 const MEASUREMENT_ID = 'G-1MWQ6QL89E';
 
 type AnalyticsWindow = Window & {
-  dataLayer?: unknown[][];
+  dataLayer?: unknown[];
   gtag?: (...args: unknown[]) => void;
 };
 
@@ -23,14 +23,22 @@ export class GoogleAnalyticsService {
   initialize(): void {
     if (this.initialized || !isPlatformBrowser(this.platformId)) return;
     this.initialized = true;
+    this.debug('initialize: browser confirmed');
 
     const analyticsWindow = window as AnalyticsWindow;
     analyticsWindow.dataLayer ??= [];
-    analyticsWindow.gtag ??= (...args: unknown[]) => analyticsWindow.dataLayer!.push(args);
+    this.debug('dataLayer initialized', { length: analyticsWindow.dataLayer.length });
+
+    analyticsWindow.gtag ??= function gtag() {
+      analyticsWindow.dataLayer!.push(arguments);
+    };
+    this.debug('gtag function defined');
 
     this.loadScript();
     analyticsWindow.gtag('js', new Date());
+    this.debug("gtag('js') queued");
     analyticsWindow.gtag('config', MEASUREMENT_ID, { send_page_view: false });
+    this.debug("gtag('config') queued", { measurementId: MEASUREMENT_ID, sendPageView: false });
     this.trackPageView();
 
     this.router.events.pipe(
@@ -40,13 +48,19 @@ export class GoogleAnalyticsService {
   }
 
   private loadScript(): void {
-    if (this.document.querySelector(`script[data-ga4-id="${MEASUREMENT_ID}"]`)) return;
+    if (this.document.querySelector(`script[data-ga4-id="${MEASUREMENT_ID}"]`)) {
+      this.debug('gtag script already present; duplicate insertion skipped');
+      return;
+    }
 
     const script = this.document.createElement('script');
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
     script.dataset['ga4Id'] = MEASUREMENT_ID;
+    script.addEventListener('load', () => this.debug('gtag script loaded'));
+    script.addEventListener('error', () => this.debug('gtag script failed to load'));
     this.document.head.appendChild(script);
+    this.debug('gtag script appended');
   }
 
   private trackPageView(): void {
@@ -59,5 +73,10 @@ export class GoogleAnalyticsService {
       page_location: window.location.href,
       page_path: pagePath,
     });
+    this.debug("gtag('event', 'page_view') queued", { pagePath });
+  }
+
+  private debug(message: string, details?: Record<string, unknown>): void {
+    console.info(`[GA4 Debug] ${message}`, details ?? '');
   }
 }
