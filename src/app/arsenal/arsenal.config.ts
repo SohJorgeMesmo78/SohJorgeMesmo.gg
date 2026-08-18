@@ -1,4 +1,4 @@
-export type ArsenalIcon = 'keyboard' | 'mouse' | 'monitor' | 'microphone';
+export type ArsenalIcon = 'keyboard' | 'mouse' | 'monitor' | 'microphone' | 'headphones';
 
 export interface ArsenalStore {
   name: 'Amazon' | 'AliExpress';
@@ -46,6 +46,14 @@ export const arsenalItems: ArsenalItem[] = [
     stores: [
       { name: 'Amazon', url: 'https://amzn.to/3S8Mj5A' },
       { name: 'AliExpress', url: 'https://s.click.aliexpress.com/e/_c4o9ROdb' },
+    ],
+  },
+  {
+    category: 'Fone sem fio',
+    name: 'Fuxi-H7',
+    icon: 'headphones',
+    stores: [
+      { name: 'Amazon', url: 'https://link.amazon/B0cc7wDlc' },
     ],
   },
 ];

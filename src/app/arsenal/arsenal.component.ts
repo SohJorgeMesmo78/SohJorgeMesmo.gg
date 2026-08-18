@@ -7,6 +7,7 @@ const ICONS: Record<ArsenalIcon, string> = {
   mouse: '◉',
   monitor: '▣',
   microphone: '♬',
+  headphones: '🎧',
 };
 
 @Component({

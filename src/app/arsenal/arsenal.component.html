@@ -9,6 +9,14 @@
 
   <div class="arsenal__grid">
     <article class="gear-card" *ngFor="let item of items">
+      <a
+        class="gear-card__primary-link"
+        [href]="item.stores[0].url"
+        target="_blank"
+        rel="noopener noreferrer sponsored"
+        [attr.aria-label]="'Ver ' + item.name + ' na ' + item.stores[0].name + ' (abre em nova aba)'"
+      ></a>
+
       <div class="gear-card__visual" aria-hidden="true">
         <img *ngIf="item.image; else categoryIcon" [src]="item.image" alt="" loading="lazy" />
         <ng-template #categoryIcon>
