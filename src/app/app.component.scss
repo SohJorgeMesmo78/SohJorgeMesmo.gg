@@ -46,6 +46,34 @@
   --cat-delay: -2s;
 }
 
+.page-shell__liz,
+.page-shell__ollie {
+  position: relative;
+  z-index: 1;
+  height: 5.5rem;
+  border-bottom: 1px solid rgba(244, 234, 212, 0.1);
+  pointer-events: none;
+}
+
+.page-shell__liz app-cat-easter-egg {
+  right: 1rem;
+  bottom: -0.05rem;
+  width: 4rem;
+  pointer-events: auto;
+  --cat-duration: 12s;
+  --cat-delay: -6s;
+}
+
+.page-shell__ollie app-cat-easter-egg {
+  bottom: -0.05rem;
+  left: 50%;
+  width: 14rem;
+  pointer-events: auto;
+  transform: translateX(-50%);
+  --cat-duration: 13.5s;
+  --cat-delay: -9s;
+}
+
 @media (max-width: 699px) {
   .page-shell__nico {
     display: flex;
@@ -61,6 +89,25 @@
     left: auto;
     margin-left: 0.35rem;
     width: 4rem;
+    pointer-events: none;
+  }
+
+  .page-shell__liz {
+    height: 4rem;
+  }
+
+  .page-shell__liz app-cat-easter-egg {
+    right: 0.4rem;
+    width: 2.8rem;
+    pointer-events: none;
+  }
+
+  .page-shell__ollie {
+    height: 4rem;
+  }
+
+  .page-shell__ollie app-cat-easter-egg {
+    width: 10rem;
     pointer-events: none;
   }
 }

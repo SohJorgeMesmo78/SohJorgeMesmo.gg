@@ -57,14 +57,6 @@
   background: rgba(255, 170, 0, 0.06);
 }
 
-.links-card__cat {
-  top: -5.65rem;
-  right: 1rem;
-  width: 4rem;
-  --cat-duration: 12s;
-  --cat-delay: -6s;
-}
-
 .link-card__icon { flex: 0 0 auto; color: var(--color-primary); width: 36px; height: 36px; display:flex; align-items:center; justify-content:center; transition: transform 180ms ease; animation: icon-wave 3.6s ease-in-out infinite; transform-origin: 50% 80%; }
 .link-card:nth-child(2n) .link-card__icon { animation-delay: 0.45s; }
 .link-card:nth-child(3n) .link-card__icon { animation-delay: 0.9s; }
@@ -87,7 +79,6 @@
 
 @media (max-width: 640px) {
   .links-card { padding-top: 1.4rem; }
-  .links-card__cat { top: -3.85rem; right: 0.4rem; width: 2.8rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

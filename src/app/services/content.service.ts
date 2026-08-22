@@ -13,7 +13,7 @@ const LIVE_TRUST_MS = 90_000;
 const YOUTUBE_URL = 'https://www.youtube.com/@SohJorgeMesmo-gg';
 const youtubeFixture: YoutubeApiPayload = {
   available: true, videoAvailable: true, channelUrl: YOUTUBE_URL,
-  channelName: 'SohJorgeMesmo-gg', subscriberCount: '115', videoTitle: 'Uma nova missão na Taverna',
+  channelName: 'SohJorgeMesmo-gg', subscriberCount: '115', videoTitle: 'Uma nova missão na Guilda',
   videoPublishedAt: new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString(), videoUrl: YOUTUBE_URL,
   thumbnailUrl: '/foto.png',
 };

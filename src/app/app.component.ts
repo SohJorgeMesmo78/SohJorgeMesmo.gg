@@ -10,6 +10,7 @@ import { RevealDirective } from './shared/reveal.directive';
 import { CatEasterEggComponent } from './shared/cat-easter-egg/cat-easter-egg.component';
 import { ArsenalComponent } from './arsenal/arsenal.component';
 import { DevControlsComponent } from './dev-controls/dev-controls.component';
+import { EventsComponent } from './events/events.component';
 
 @Component({
   selector: 'app-root',
@@ -26,6 +27,7 @@ import { DevControlsComponent } from './dev-controls/dev-controls.component';
     CatEasterEggComponent,
     ArsenalComponent,
     DevControlsComponent,
+    EventsComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],

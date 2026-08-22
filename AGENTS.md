@@ -17,13 +17,13 @@ O objetivo é que alguém vindo de Instagram, TikTok ou outra rede pense: “Que
 
 A estética usa referências sutis a RPG, guilda, taverna, aventura e videogames, mas o assunto é games em geral. Use essa camada como tempero; não transforme a interface em MMORPG ou site exclusivamente medieval.
 
-A comunicação deve soar como criador de conteúdo/games. Conceitos existentes incluem `Taverna do Jooj`, `A Guilda`, `O que tá rolando`, `Nova missão disponível` e `Live às 19h`. Evite linguagem corporativa, SaaS, portfólio tech e marketing genérico.
+A comunicação deve soar como criador de conteúdo/games. Conceitos existentes incluem `Guilda do Jooj`, `A Guilda`, `O que tá rolando`, `Nova missão disponível` e `Live às 19h`. Evite linguagem corporativa, SaaS, portfólio tech e marketing genérico.
 
 ## Arquitetura de informação
 
 ### Hero
 
-Identidade do criador: foto, `Taverna do Jooj`, apresentação e identificador social rotativo. O identificador é interativo e leva para `A Guilda`.
+Identidade do criador: foto, `Guilda do Jooj`, apresentação e identificador social rotativo. O identificador é interativo e leva para `A Guilda`.
 
 ### Status das lives
 
