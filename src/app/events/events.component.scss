@@ -1,6 +1,7 @@
 :host { display: block; }
 
-.events { padding-block: 0.35rem; }
+.events { position: relative; padding: 1.2rem; border: 1px solid rgba(255, 170, 0, 0.28); border-radius: 16px; background: linear-gradient(155deg, rgba(21, 27, 94, 0.56), rgba(9, 11, 26, 0.88)); }
+.events::before { content: ''; position: absolute; inset: 0.55rem; border: 1px solid rgba(255, 170, 0, 0.09); border-radius: 11px; clip-path: polygon(0 0, 4rem 0, 4rem 1px, calc(100% - 4rem) 1px, calc(100% - 4rem) 0, 100% 0, 100% 100%, 0 100%); pointer-events: none; }
 
 .events__header {
   display: grid;
@@ -15,6 +16,8 @@
   letter-spacing: 0.14rem;
   text-transform: uppercase;
 }
+
+.events__eyebrow::before { content: '✦'; margin-right: 0.4rem; color: rgba(255, 194, 70, 0.72); }
 
 .events h2 {
   margin-top: 0.15rem;
@@ -36,19 +39,23 @@
 }
 
 .event-card {
+  position: relative;
   display: grid;
   grid-template-columns: 4.25rem minmax(0, 1fr);
   gap: 0.85rem;
   align-items: center;
   min-width: 0;
   padding: 0.8rem;
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(255, 170, 0, 0.055), transparent 48%), rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+  border: 1px solid rgba(255, 170, 0, 0.2);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255, 170, 0, 0.07), transparent 48%), rgba(7, 9, 24, 0.68);
   color: inherit;
   text-decoration: none;
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
 }
+
+.event-card::after { content: ''; position: absolute; inset: auto 0 0; height: 2px; background: linear-gradient(90deg, var(--guild-gold), transparent 70%); opacity: 0.55; }
 
 .event-card:hover,
 .event-card:focus-visible {
@@ -67,8 +74,8 @@
   place-items: center;
   min-height: 4.25rem;
   border: 1px solid rgba(255, 170, 0, 0.22);
-  border-radius: 13px;
-  background: rgba(0, 0, 102, 0.22);
+  border-radius: 8px;
+  background: linear-gradient(145deg, rgba(21, 27, 94, 0.85), rgba(9, 11, 28, 0.9));
   color: var(--color-primary);
 }
 
@@ -85,7 +92,8 @@
 .event-card__recurrence,
 .event-card__info > p:last-child {
   color: var(--color-muted);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
 }
 
 .event-card h3 {
@@ -119,6 +127,8 @@
 @media (min-width: 1000px) {
   .events__calendar { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
+
+@media (max-width: 520px) { .events { padding: 1rem; } }
 
 @media (prefers-reduced-motion: reduce) {
   .event-card { transition: none; }

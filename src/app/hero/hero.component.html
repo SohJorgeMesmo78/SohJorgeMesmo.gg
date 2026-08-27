@@ -1,21 +1,24 @@
 <section class="hero-banner" aria-labelledby="hero-title">
-  <div class="hero-banner__visual" aria-hidden="true">
-    <div class="hero-banner__glow"></div>
-    <img src="/foto.png" alt="SohJorgeMesmo em pose de criador de conteúdo" width="860" height="980" />
-  </div>
+  <div class="hero-banner__stars" aria-hidden="true"></div>
+  <div class="hero-banner__village" aria-hidden="true"></div>
+  <div class="hero-banner__standards" aria-hidden="true"><span></span><span></span></div>
 
   <div class="hero-banner__content">
-    <button class="hero-banner__eyebrow hero-banner__rotator" (click)="onClick()" aria-label="Ver todas as redes em A Guilda" title="Ir para A Guilda">
-      <span class="hero-banner__rotator-item" [class.is-changing]="isChanging()">
-      <app-icon [name]="items[currentIndex()].name" [size]="18"></app-icon>
-      <span class="hero-banner__rotator-label">{{ items[currentIndex()].label }}</span>
-      </span>
+    <h1 id="hero-title" class="hero-banner__sr-only">SohJorgeMesmo — Entra pra Guilda</h1>
+    <button class="hero-banner__identity" (click)="onClick()" aria-label="Entrar na Guilda e ver todas as redes" title="Ir para A Guilda">
+      <img src="/assets/brand/png/SohJorgeMesmo.png" alt="" width="1672" height="941" />
     </button>
-    <h1 id="hero-title">Guilda do Jooj</h1>
-    <p class="hero-banner__tagline">Jogos, caos e decisões questionáveis.</p>
+  </div>
 
-    <div class="hero-banner__meta" aria-label="Resumo da guilda">
-      <span>Lives terças, quartas e sextas às 19h</span>
-    </div>
+  <div class="hero-banner__cats" aria-hidden="true">
+    <img class="hero-banner__cat hero-banner__cat--tabby" src="/assets/brand/png/cat-tabby.png" alt="" width="650" height="810" />
+    <img class="hero-banner__cat hero-banner__cat--siamese" src="/assets/brand/png/cat-siamese.png" alt="" width="604" height="850" />
+    <img class="hero-banner__cat hero-banner__cat--black" src="/assets/brand/png/cat-black.png" alt="" width="1184" height="494" />
+  </div>
+
+  <div class="hero-banner__jorge">
+    <div class="hero-banner__glow" aria-hidden="true"></div>
+    <img class="hero-banner__jorge-image" src="/assets/brand/png/jorge-hero.png" alt="SohJorgeMesmo sorrindo e apresentando a Guilda" width="1448" height="1086" />
+    <img class="hero-banner__mascot" src="/assets/brand/png/jorginho-happy.png" alt="" width="512" height="512" aria-hidden="true" />
   </div>
 </section>

@@ -2,107 +2,128 @@
 
 :root {
   color-scheme: dark;
-  --color-bg: #121214;
-  --color-surface: #17171d;
-  --color-surface-soft: #1d1d27;
-  --color-text: #f4ead4;
-  --color-muted: #c9beac;
-  --color-primary: #ffaa00;
-  --color-secondary: #000066;
+  --guild-gold: #ffaa00;
+  --guild-navy: #10164a;
+  --guild-navy-light: #151b5e;
+  --guild-black: #121214;
+  --guild-cream: #f4ead4;
+  --guild-border: rgba(255, 170, 0, 0.22);
+  --guild-gold-soft: rgba(255, 170, 0, 0.1);
+  --guild-blue-soft: rgba(21, 27, 94, 0.5);
+  --color-bg: #0c0d16;
+  --color-surface: #11162f;
+  --color-surface-soft: #151b3e;
+  --color-text: var(--guild-cream);
+  --color-muted: #bdb6aa;
+  --color-primary: var(--guild-gold);
+  --color-secondary: var(--guild-navy);
   --color-border: rgba(244, 234, 212, 0.12);
-  --color-border-strong: rgba(255, 170, 0, 0.26);
-  --font-sans: 'Montserrat', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    'Segoe UI', sans-serif;
+  --color-border-strong: var(--guild-border);
+  --font-sans: 'Montserrat', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-display: 'MedievalSharp', Georgia, serif;
   --radius: 24px;
   --radius-sm: 18px;
-  --container-max: 1080px;
+  --container-max: 1220px;
   --transition: 180ms ease;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html {
   font-family: var(--font-sans);
   font-size: 16px;
   scroll-behavior: smooth;
+  background: var(--color-bg);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: hidden;
   background:
-    radial-gradient(circle at top left, rgba(255, 170, 0, 0.14), transparent 18%),
-    linear-gradient(180deg, #121214 0%, #0e0e12 100%);
+    radial-gradient(circle at 50% -8%, rgba(28, 39, 123, 0.88), transparent 43rem),
+    radial-gradient(circle at 7% 38%, rgba(18, 28, 100, 0.52), transparent 30rem),
+    radial-gradient(circle at 92% 70%, rgba(13, 22, 82, 0.4), transparent 34rem),
+    linear-gradient(180deg, #090d2a 0%, #07091b 54%, #08091a 100%);
   color: var(--color-text);
 }
 
-body,
-button,
-input,
-textarea,
-a {
-  font: inherit;
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.32;
+  background-image:
+    radial-gradient(circle, rgba(255, 170, 0, 0.5) 0 1px, transparent 1.4px),
+    radial-gradient(circle, rgba(244, 234, 212, 0.26) 0 1px, transparent 1.3px);
+  background-position: 0 0, 43px 29px;
+  background-size: 83px 83px, 127px 127px;
+  mask-image: linear-gradient(to bottom, #000, transparent 78%);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+:is(.links-card, .events, .video-feature, .arsenal) {
+  border-color: rgba(255, 170, 0, 0.28) !important;
+  border-radius: 16px !important;
+  background: linear-gradient(135deg, rgba(255, 170, 0, 0.24) 0 1px, transparent 1px) top left / 2.5rem 2.5rem no-repeat, linear-gradient(315deg, rgba(255, 170, 0, 0.17) 0 1px, transparent 1px) bottom right / 2.5rem 2.5rem no-repeat, radial-gradient(circle at 20% 0%, rgba(35, 48, 139, 0.34), transparent 34%), linear-gradient(145deg, rgba(15, 23, 79, 0.9), rgba(6, 9, 31, 0.97)) !important;
+  box-shadow: inset 0 1px rgba(255, 214, 115, 0.08), inset 0 0 45px rgba(0, 0, 0, 0.22), 0 18px 42px rgba(0, 0, 0, 0.2);
 }
 
-img,
-svg {
-  display: block;
-  max-width: 100%;
+:is(.links-card__header, .events__header, .video-feature__header, .arsenal__header) { position: relative; padding-bottom: 0.8rem; }
+:is(.links-card__header, .events__header, .video-feature__header, .arsenal__header)::after { content: ''; position: absolute; inset: auto 0 0; height: 1px; background: linear-gradient(90deg, var(--guild-gold), rgba(255, 170, 0, 0.12) 42%, transparent 82%); box-shadow: 0 0 8px rgba(255, 170, 0, 0.18); }
+:is(.links-card, .events, .video-feature, .arsenal) h2 { text-shadow: 0 2px 0 #05071a, 0 0 18px rgba(255, 170, 0, 0.09); }
+:is(.link-card, .event-card, .gear-card) { border-radius: 10px !important; border-color: rgba(255, 170, 0, 0.2) !important; box-shadow: inset 0 1px rgba(255, 219, 132, 0.035); }
+:is(.status-strip) { border-radius: 10px !important; border-color: rgba(255, 170, 0, 0.24) !important; box-shadow: inset 0 1px rgba(255, 219, 132, 0.06), inset 0 0 26px rgba(5, 8, 34, 0.24), 0 12px 30px rgba(0, 0, 0, 0.18); }
+:is(.status-strip)::after { content: ''; position: absolute; top: 0.42rem; right: 0.42rem; width: 0.75rem; height: 0.75rem; border-top: 1px solid rgba(255, 170, 0, 0.3); border-right: 1px solid rgba(255, 170, 0, 0.3); pointer-events: none; }
+
+.hero-banner__stars {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.42;
+  background-image: radial-gradient(circle, var(--guild-gold) 0 1px, transparent 1.5px), linear-gradient(var(--guild-gold), var(--guild-gold)), linear-gradient(90deg, var(--guild-gold), var(--guild-gold));
+  background-size: 61px 61px, 1px 7px, 7px 1px;
+  background-position: 0 0, 31px 19px, 28px 22px;
+  mask-image: radial-gradient(circle at center, #000, transparent 78%);
 }
 
-button,
-a {
+.hero-banner__village { position: absolute; inset: auto 0 0; z-index: 0; height: 44%; opacity: 0.52; background: linear-gradient(180deg, transparent, rgba(2, 4, 20, 0.92) 74%), repeating-linear-gradient(90deg, #060a2c 0 7%, #080d38 7% 10%, #050823 10% 16%); clip-path: polygon(0 36%, 5% 36%, 5% 18%, 8% 18%, 8% 42%, 13% 42%, 13% 25%, 17% 25%, 17% 48%, 23% 48%, 23% 13%, 25% 5%, 27% 13%, 27% 48%, 72% 48%, 72% 28%, 76% 28%, 76% 47%, 82% 47%, 82% 12%, 84% 2%, 86% 12%, 86% 40%, 92% 40%, 92% 22%, 96% 22%, 96% 42%, 100% 42%, 100% 100%, 0 100%); }
+.hero-banner__village::after { content: ''; position: absolute; inset: 25% 0 0; opacity: 0.5; background-image: radial-gradient(circle, #ffbd3d 0 1px, transparent 1.7px); background-size: 29px 23px; filter: drop-shadow(0 0 4px rgba(255, 170, 0, 0.7)); }
+.hero-banner__standards span { position: absolute; z-index: 1; top: 13%; width: 2.3rem; height: 5rem; border: 1px solid rgba(255, 170, 0, 0.4); background: linear-gradient(90deg, #0b1247, #17206d, #0a1040); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%); opacity: 0.72; }
+.hero-banner__standards span::after { content: '♛'; display: grid; place-items: center; height: 72%; color: var(--guild-gold); font-size: 1.2rem; }
+.hero-banner__standards span:first-child { left: 4%; }
+.hero-banner__standards span:last-child { right: 4%; }
+
+.video-feature__thumbnail--new {
+  box-shadow: 0 0 22px rgba(255, 170, 0, 0.32), 0 0 62px rgba(255, 170, 0, 0.2);
+  animation: guild-new-content-glow 5.5s ease-in-out infinite;
+}
+
+@keyframes guild-new-content-glow {
+  50% { box-shadow: 0 0 28px rgba(255, 170, 0, 0.4), 0 0 78px rgba(255, 170, 0, 0.25); }
+}
+
+body, button, input, textarea, a { font: inherit; }
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+
+button, a {
   transition: transform var(--transition), color var(--transition), background var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
 
-:focus-visible {
-  outline: 2px solid rgba(255, 170, 0, 0.95);
-  outline-offset: 3px;
-}
+:focus-visible { outline: 2px solid rgba(255, 170, 0, 0.95); outline-offset: 3px; }
+::selection { background: rgba(255, 170, 0, 0.28); color: var(--guild-cream); }
+h1, h2, h3, h4, h5, h6 { margin: 0; color: var(--color-text); font-family: var(--font-display); }
+p { margin: 0; color: var(--color-muted); }
+button { border: none; }
+button:active, a:active { transform: translateY(1px); }
 
-::selection {
-  background: rgba(255, 170, 0, 0.24);
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin: 0;
-  color: var(--color-text);
-  font-family: var(--font-display);
-}
-
-p {
-  margin: 0;
-  color: var(--color-muted);
-}
-
-button {
-  border: none;
-}
-
-button:active,
-a:active { transform: translateY(1px); }
-
-@media (max-width: 650px) {
-  :root {
-    font-size: 15px;
-  }
-}
+@media (max-width: 650px) { :root { font-size: 15px; } }
+@media (max-width: 430px) { .hero-banner__standards span { top: 31%; width: 1.7rem; height: 3.8rem; opacity: 0.45; } }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+  .video-feature__thumbnail--new { animation: none; }
 }
-

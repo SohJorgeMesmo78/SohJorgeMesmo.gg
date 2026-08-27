@@ -7,11 +7,16 @@
   display: grid;
   gap: 0.2rem;
   min-height: 3.5rem;
-  padding: 0.8rem 0.9rem;
-  border-radius: 18px;
-  border: 1px solid rgba(244, 234, 212, 0.1);
-  background: rgba(255, 255, 255, 0.02);
+  padding: 1rem 1.05rem;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 170, 0, 0.24);
+  background: radial-gradient(circle at 12% 0%, rgba(37, 50, 143, 0.32), transparent 46%), linear-gradient(145deg, rgba(15, 23, 79, 0.9), rgba(7, 9, 30, 0.96));
+  box-shadow: inset 0 1px rgba(244, 234, 212, 0.035);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
+
+.status-strip:hover { transform: translateY(-2px); border-color: var(--guild-border); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); }
 
 .status-strip__head { display: flex; align-items: center; gap: 0.45rem; color: var(--color-primary); }
 
@@ -35,7 +40,7 @@
 
 .status-strip--live {
   border-color: rgba(255, 59, 92, 0.46);
-  background: linear-gradient(180deg, rgba(255, 59, 92, 0.1), rgba(18, 18, 20, 0.78));
+  background: linear-gradient(145deg, rgba(255, 59, 92, 0.13), rgba(16, 22, 74, 0.88));
   box-shadow: 0 0 32px rgba(255, 59, 92, 0.18);
   animation: live-glow 5s ease-in-out infinite;
 }

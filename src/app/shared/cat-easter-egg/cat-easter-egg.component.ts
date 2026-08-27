@@ -2,10 +2,10 @@ import { Component, HostBinding, Input } from '@angular/core';
 
 type CatName = 'nico' | 'liz' | 'ollie';
 
-const CAT_ASSETS: Record<CatName, { width: number; height: number }> = {
-  nico: { width: 631, height: 814 },
-  liz: { width: 560, height: 869 },
-  ollie: { width: 1131, height: 443 },
+const CAT_ASSETS: Record<CatName, { path: string; width: number; height: number }> = {
+  nico: { path: 'cat-tabby.png', width: 650, height: 810 },
+  liz: { path: 'cat-siamese.png', width: 604, height: 850 },
+  ollie: { path: 'cat-black.png', width: 1184, height: 494 },
 };
 
 @Component({
@@ -13,7 +13,7 @@ const CAT_ASSETS: Record<CatName, { width: number; height: number }> = {
   standalone: true,
   template: `
     <img
-      [src]="'/cats/' + cat + '.png'"
+      [src]="'/assets/brand/png/' + asset.path"
       alt=""
       [attr.width]="asset.width"
       [attr.height]="asset.height"
@@ -36,7 +36,7 @@ export class CatEasterEggComponent {
     return this.label;
   }
 
-  get asset(): { width: number; height: number } {
+  get asset(): { path: string; width: number; height: number } {
     return CAT_ASSETS[this.cat];
   }
 }
