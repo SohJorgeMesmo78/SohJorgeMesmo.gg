@@ -41,10 +41,9 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at 50% -8%, rgba(28, 39, 123, 0.88), transparent 43rem),
-    radial-gradient(circle at 7% 38%, rgba(18, 28, 100, 0.52), transparent 30rem),
-    radial-gradient(circle at 92% 70%, rgba(13, 22, 82, 0.4), transparent 34rem),
-    linear-gradient(180deg, #090d2a 0%, #07091b 54%, #08091a 100%);
+    linear-gradient(180deg, rgba(5, 8, 29, 0.22), rgba(5, 7, 22, 0.48)),
+    url('/assets/brand/backgrounds/bg-site-base-nocturne.png') center top / cover no-repeat fixed,
+    #07091b;
   color: var(--color-text);
 }
 
@@ -54,7 +53,7 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.32;
+  opacity: 0.12;
   background-image:
     radial-gradient(circle, rgba(255, 170, 0, 0.5) 0 1px, transparent 1.4px),
     radial-gradient(circle, rgba(244, 234, 212, 0.26) 0 1px, transparent 1.3px);
@@ -80,16 +79,14 @@ body::before {
 .hero-banner__stars {
   position: absolute;
   inset: 0;
-  z-index: 0;
-  opacity: 0.42;
-  background-image: radial-gradient(circle, var(--guild-gold) 0 1px, transparent 1.5px), linear-gradient(var(--guild-gold), var(--guild-gold)), linear-gradient(90deg, var(--guild-gold), var(--guild-gold));
-  background-size: 61px 61px, 1px 7px, 7px 1px;
-  background-position: 0 0, 31px 19px, 28px 22px;
-  mask-image: radial-gradient(circle at center, #000, transparent 78%);
+  z-index: 1;
+  opacity: 0.1;
+  background: url('/assets/brand/backgrounds/overlay-sparkles-dourados.png') center / cover no-repeat;
+  mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.22) 0 34%, #000 76%);
+  pointer-events: none;
 }
 
-.hero-banner__village { position: absolute; inset: auto 0 0; z-index: 0; height: 44%; opacity: 0.52; background: linear-gradient(180deg, transparent, rgba(2, 4, 20, 0.92) 74%), repeating-linear-gradient(90deg, #060a2c 0 7%, #080d38 7% 10%, #050823 10% 16%); clip-path: polygon(0 36%, 5% 36%, 5% 18%, 8% 18%, 8% 42%, 13% 42%, 13% 25%, 17% 25%, 17% 48%, 23% 48%, 23% 13%, 25% 5%, 27% 13%, 27% 48%, 72% 48%, 72% 28%, 76% 28%, 76% 47%, 82% 47%, 82% 12%, 84% 2%, 86% 12%, 86% 40%, 92% 40%, 92% 22%, 96% 22%, 96% 42%, 100% 42%, 100% 100%, 0 100%); }
-.hero-banner__village::after { content: ''; position: absolute; inset: 25% 0 0; opacity: 0.5; background-image: radial-gradient(circle, #ffbd3d 0 1px, transparent 1.7px); background-size: 29px 23px; filter: drop-shadow(0 0 4px rgba(255, 170, 0, 0.7)); }
+.hero-banner__village { display: none; }
 .hero-banner__standards span { position: absolute; z-index: 1; top: 13%; width: 2.3rem; height: 5rem; border: 1px solid rgba(255, 170, 0, 0.4); background: linear-gradient(90deg, #0b1247, #17206d, #0a1040); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%); opacity: 0.72; }
 .hero-banner__standards span::after { content: '♛'; display: grid; place-items: center; height: 72%; color: var(--guild-gold); font-size: 1.2rem; }
 .hero-banner__standards span:first-child { left: 4%; }
@@ -120,6 +117,14 @@ button { border: none; }
 button:active, a:active { transform: translateY(1px); }
 
 @media (max-width: 650px) { :root { font-size: 15px; } }
+@media (max-width: 650px) { body { background-attachment: scroll; } }
+@media (max-width: 900px) { .hero-banner__stars { opacity: 0.08; } }
+@media (max-width: 650px) {
+  .hero-banner__stars {
+    opacity: 0.055;
+    background-size: auto 92%;
+  }
+}
 @media (max-width: 430px) { .hero-banner__standards span { top: 31%; width: 1.7rem; height: 3.8rem; opacity: 0.45; } }
 
 @media (prefers-reduced-motion: reduce) {
