@@ -36,6 +36,7 @@
 }
 
 @media (max-width: 640px) {
-  .site-footer { margin-top: 3rem; padding-top: 2.5rem; }
+  .site-footer { margin-top: 3rem; padding: 2.5rem 0.85rem 1.75rem; }
   .site-footer__mascot { left: 50%; bottom: calc(100% - 1.45rem); width: 5rem; height: auto; }
+  .site-footer__content { gap: 0.6rem 0.75rem; line-height: 1.45; }
 }

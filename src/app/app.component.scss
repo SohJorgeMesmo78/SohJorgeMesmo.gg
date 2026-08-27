@@ -7,7 +7,24 @@
 .page-shell { min-height: 100vh; padding: 1rem 1rem 3rem; background: radial-gradient(circle at 50% 0%, rgba(30, 43, 133, 0.42), transparent 40rem), linear-gradient(90deg, rgba(5, 8, 31, 0.38), transparent 18%, transparent 82%, rgba(5, 8, 31, 0.38)); }
 .page-shell__content { --section-gap: clamp(1.4rem, 3vw, 2.5rem); width: min(100%, var(--container-max)); min-width: 0; margin-inline: auto; display: grid; gap: var(--section-gap); }
 .page-shell__content > * { min-width: 0; max-width: 100%; }
-.page-shell__feature-row { display: grid; gap: 0.8rem; }
+.page-shell__feature-row {
+  position: relative;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.page-shell__feature-row::after {
+  content: '';
+  position: absolute;
+  top: calc(100% + 0.2rem);
+  left: 50%;
+  width: calc(100% + 6rem);
+  height: var(--section-gap);
+  background: url('/assets/brand/backgrounds/overlay-faixa-dourada-topo.png') center -4rem / 100% auto no-repeat;
+  opacity: 0.18;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
 
 .page-shell__nico,
 .page-shell__liz,
@@ -22,6 +39,14 @@
   .page-shell__feature-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+@media (max-width: 900px) {
+  .page-shell__feature-row::after {
+    width: calc(100% + 3rem);
+    background-position: center -2.2rem;
+    opacity: 0.14;
+  }
+}
+
 @media (max-width: 699px) {
   .page-shell { width: 100%; max-width: 100vw; padding-inline: 0.75rem; }
   .page-shell__content { --section-gap: 1.5rem; width: calc(100vw - 1.5rem); max-width: 100%; }
@@ -29,6 +54,12 @@
   .page-shell__nico app-cat-easter-egg { left: 0.4rem; width: 4rem; pointer-events: none; }
   .page-shell__liz app-cat-easter-egg { right: 0.4rem; width: 3rem; pointer-events: none; }
   .page-shell__ollie app-cat-easter-egg { width: 10rem; pointer-events: none; }
+  .page-shell__feature-row::after {
+    top: calc(100% + 0.1rem);
+    width: calc(100% + 1.5rem);
+    background-position: center -1.7rem;
+    opacity: 0.1;
+  }
 }
 
 @media (max-width: 339px) { .page-shell__nico app-cat-easter-egg { width: 3.5rem; } }

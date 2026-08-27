@@ -128,7 +128,12 @@
   .events__calendar { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
-@media (max-width: 520px) { .events { padding: 1rem; } }
+@media (max-width: 520px) {
+  .events { padding: 0.9rem; }
+  .events__header { gap: 0.4rem; margin-bottom: 0.75rem; }
+  .events__calendar { gap: 0.6rem; }
+  .event-card { padding: 0.75rem; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .event-card { transition: none; }

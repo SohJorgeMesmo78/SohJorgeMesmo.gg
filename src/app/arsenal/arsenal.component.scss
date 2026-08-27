@@ -185,7 +185,13 @@
   }
 }
 
-@media (max-width: 520px) { .arsenal { padding: 1rem; } }
+@media (max-width: 520px) {
+  .arsenal { padding: 0.9rem; }
+  .arsenal__header { gap: 0.45rem; margin-bottom: 0.75rem; }
+  .arsenal__grid { gap: 0.6rem; }
+  .gear-card { padding: 0.75rem; }
+  .gear-card__meta { align-items: flex-start; }
+}
 
 @media (min-width: 860px) {
   .arsenal__header {

@@ -215,7 +215,13 @@
   }
 }
 
-@media (max-width: 520px) { .video-feature { padding: 1rem; } }
+@media (max-width: 520px) {
+  .video-feature { padding: 0.9rem; }
+  .video-feature__content { gap: 0.8rem; }
+  .video-feature__info { gap: 0.7rem; }
+  .video-feature__meta-row { line-height: 1.45; }
+  .button { min-height: 2.75rem; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .video-feature__thumbnail::before,
