@@ -1,4 +1,4 @@
-export type HubPlatformIcon = 'youtube' | 'twitch' | 'instagram' | 'tiktok' | 'x' | 'livepix';
+export type HubPlatformIcon = 'youtube' | 'twitch' | 'instagram' | 'tiktok' | 'x' | 'discord' | 'livepix';
 
 export interface SocialLink {
   id: string;
@@ -119,6 +119,16 @@ export const socialLinks: SocialLink[] = [
     priority: 'secondary',
     icon: 'x',
     handle: '@SohJorgeMesmo78',
+  },
+  {
+    id: 'discord',
+    name: 'Discord',
+    url: 'https://discord.gg/KfdT6vEcbC',
+    label: 'Discord da Guilda',
+    description: 'Entre para a comunidade da Guilda',
+    priority: 'secondary',
+    icon: 'discord',
+    handle: 'Guilda do Jooj',
   },
   {
     id: 'livepix',

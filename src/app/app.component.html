@@ -1,9 +1,10 @@
 <div class="scroll-progress" aria-hidden="true"></div>
+<router-outlet></router-outlet>
 <main class="page-shell" role="main">
   <div class="page-shell__content">
-    <app-hero appReveal></app-hero>
+    <app-hero id="home-start" appReveal></app-hero>
 
-    <div class="page-shell__feature-row" appReveal aria-label="Informações rápidas">
+    <div id="live-status" class="page-shell__feature-row" appReveal aria-label="Informações rápidas">
       <app-twitch-section></app-twitch-section>
       <app-youtube-section></app-youtube-section>
     </div>
@@ -14,23 +15,23 @@
       <app-cat-easter-egg class="page-shell__nico-cat" cat="nico" label="Nico"></app-cat-easter-egg>
     </div>
 
-    <app-events appReveal></app-events>
+    <app-events id="events" appReveal></app-events>
 
     <div class="page-shell__liz" aria-hidden="true">
       <app-cat-easter-egg cat="liz" label="Liz"></app-cat-easter-egg>
     </div>
 
-    <app-latest-video appReveal></app-latest-video>
+    <app-latest-video id="latest-content" appReveal></app-latest-video>
 
     <div class="page-shell__ollie" aria-hidden="true">
       <app-cat-easter-egg cat="ollie" label="Ollie"></app-cat-easter-egg>
     </div>
 
-    <app-arsenal appReveal></app-arsenal>
+    <app-arsenal id="arsenal" appReveal></app-arsenal>
   </div>
 </main>
 
-<app-footer></app-footer>
+<app-footer id="site-footer"></app-footer>
 @defer (when devControlsEnabled) {
   <app-dev-controls></app-dev-controls>
 }
