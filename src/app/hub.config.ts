@@ -1,4 +1,4 @@
-export type HubPlatformIcon = 'youtube' | 'twitch' | 'instagram' | 'tiktok' | 'x' | 'discord' | 'livepix';
+export type HubPlatformIcon = 'youtube' | 'twitch' | 'kick' | 'instagram' | 'tiktok' | 'x' | 'discord' | 'livepix';
 
 export interface SocialLink {
   id: string;
@@ -88,6 +88,16 @@ export const socialLinks: SocialLink[] = [
     description: 'Assista às lives ao vivo',
     priority: 'primary',
     icon: 'twitch',
+    handle: '@SohJorgeMesmo',
+  },
+  {
+    id: 'kick',
+    name: 'Kick',
+    url: 'https://kick.com/sohjorgemesmo',
+    label: 'Kick',
+    description: 'Acompanhe as lives na Kick',
+    priority: 'primary',
+    icon: 'kick',
     handle: '@SohJorgeMesmo',
   },
   {
